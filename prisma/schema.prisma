@@ -1,0 +1,241 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+}
+
+enum EnquiryType {
+  HOME_COLLECTION
+  PACKAGE
+  CONTACT
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model AdminUser {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         AdminRole @default(ADMIN)
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Package {
+  id              String           @id @default(cuid())
+  title           String
+  slug            String           @unique
+  category        String
+  testCount       Int              @default(1)
+  originalPrice   Float
+  discountedPrice Float
+  description     String
+  includedTests   String[]
+  benefits        String[]
+  preparation     String?
+  imageUrl        String?
+  isPopular       Boolean          @default(false)
+  badgeText       String?
+  isPublished     Boolean          @default(true)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  enquiryPackages EnquiryPackage[]
+}
+
+model Campaign {
+  id             String            @id @default(cuid())
+  name           String
+  slug           String            @unique
+  title          String
+  subtitle       String?
+  description    String?
+  heroImageUrl   String?
+  ctaText        String            @default("Book Now")
+  ctaLink        String?
+  seoTitle       String?
+  seoDescription String?
+  isActive       Boolean           @default(true)
+  startDate      DateTime?
+  endDate        DateTime?
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
+  sections       CampaignSection[]
+  enquiries      Enquiry[]
+}
+
+model CampaignSection {
+  id           String   @id @default(cuid())
+  campaignId   String
+  campaign     Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  title        String
+  content      String
+  imageUrl     String?
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Customer {
+  id        String    @id @default(cuid())
+  fullName  String
+  phone     String
+  email     String?
+  address   String?
+  city      String?
+  pincode   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  enquiries Enquiry[]
+
+  @@index([phone])
+}
+
+model Enquiry {
+  id              String          @id @default(cuid())
+  type            EnquiryType
+  customerId      String
+  customer        Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  campaignId      String?
+  campaign        Campaign?       @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  status          EnquiryStatus   @default(NEW)
+  message         String?
+  prescriptionUrl String?
+  preferredDate   String?
+  preferredTime   String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  tests           EnquiryTest[]
+  package         EnquiryPackage?
+
+  @@index([customerId])
+  @@index([campaignId])
+  @@index([status])
+  @@index([type])
+}
+
+model EnquiryTest {
+  id        String   @id @default(cuid())
+  enquiryId String
+  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  testName  String
+  createdAt DateTime @default(now())
+}
+
+model EnquiryPackage {
+  id        String   @id @default(cuid())
+  enquiryId String   @unique
+  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  packageId String
+  package   Package  @relation(fields: [packageId], references: [id], onDelete: Restrict)
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+}
+
+model DiagnosticTest {
+  id               String   @id @default(cuid())
+  name             String
+  code             String   @unique
+  category         String
+  price            Float
+  originalPrice    Float?
+  sampleType       String
+  fastingRequired  Boolean  @default(false)
+  reportTurnaround String
+  description      String?
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Blog {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String
+  content     String
+  coverImage  String
+  readTime    String
+  author      String   @default("AiCura Team")
+  isPublished Boolean  @default(true)
+  publishedAt DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Testimonial {
+  id         String   @id @default(cuid())
+  patientName String
+  location   String
+  comment    String
+  rating     Int      @default(5)
+  avatarUrl  String?
+  isFeatured Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model FAQ {
+  id           String   @id @default(cuid())
+  question     String
+  answer       String
+  displayOrder Int      @default(0)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model HeroBanner {
+  id                  String   @id @default(cuid())
+  badgeText           String?
+  title               String?
+  subtitle            String?
+  buttonText          String   @default("Explore")
+  buttonLink          String   @default("/packages")
+  imageUrl            String?
+  imagePublicId       String?
+  mobileImageUrl      String?
+  mobileImagePublicId String?
+  displayOrder        Int      @default(0)
+  isActive            Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model HomeCollectionBanner {
+  id                String   @id @default(cuid())
+  badgeText         String?  @default("HOME COLLECTION")
+  titlePrefix       String?  @default("Healthcare that")
+  titleHighlight    String?  @default("comes home.")
+  subtitle          String?  @default("Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.")
+  bgImageUrl        String?
+  bgImagePublicId   String?
+  bikeImageUrl      String?
+  bikeImagePublicId String?
+  buttonText        String?  @default("Book Home Collection")
+  buttonLink        String?  @default("/home-collection")
+  animationSpeed    Int      @default(12)
+  animationEnabled  Boolean  @default(true)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+
+

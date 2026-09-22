@@ -1,0 +1,60 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 160 30% 10%;
+  }
+  
+  body {
+    background-color: #f8faf9;
+    color: #1e293b;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Healthcare Theme Utilities */
+.hero-gradient {
+  background: linear-gradient(135deg, #0b2e2d 0%, #0f3938 60%, #134e4a 100%);
+}
+
+.gold-gradient {
+  background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+}
+
+.gold-gradient-hover:hover {
+  background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+}
+
+.card-shadow {
+  box-shadow: 0 10px 25px -5px rgba(15, 57, 56, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Floating WhatsApp Animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 15px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.whatsapp-pulse {
+  animation: pulse-ring 2s infinite;
+}

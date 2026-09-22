@@ -1,0 +1,227 @@
+@baseUrl = http://localhost:3000
+@authToken = your_token_here
+
+###############################################################################
+# 1. AUTHENTICATION
+###############################################################################
+
+### Login as Admin (Run this first to get token)
+# @name login
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@aicuradiagnostics.com",
+  "password": "admin123"
+}
+
+### Get Logged-in Admin Profile (Requires Auth Cookie or Token)
+GET {{baseUrl}}/api/auth/me
+Authorization: Bearer {{authToken}}
+
+### Logout Admin
+POST {{baseUrl}}/api/auth/logout
+
+
+###############################################################################
+# 2. PACKAGES
+###############################################################################
+
+### List All Public Packages
+GET {{baseUrl}}/api/packages
+
+### List Popular Packages Only
+GET {{baseUrl}}/api/packages?isPopular=true
+
+### List Packages Filtered by Category
+GET {{baseUrl}}/api/packages?category=Senior%20Care
+
+### Get Single Package by ID or Slug (Replace with actual ID or slug)
+GET {{baseUrl}}/api/packages/full-body-checkup-comprehensive
+
+### Create a New Package (Admin Only)
+POST {{baseUrl}}/api/packages
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "Basic Health Checkup",
+  "slug": "basic-health-checkup",
+  "category": "General",
+  "testCount": 35,
+  "originalPrice": 1999,
+  "discountedPrice": 799,
+  "description": "Essential preventative checkup covering key vital organ parameters.",
+  "includedTests": [
+    "Complete Blood Count (CBC)",
+    "Lipid Profile Basic",
+    "Fasting Blood Sugar"
+  ],
+  "benefits": [
+    "Free Home Collection",
+    "Reports within 12 Hours"
+  ],
+  "preparation": "10-12 hours fasting required",
+  "isPopular": true,
+  "isPublished": true,
+  "badgeText": "POPULAR"
+}
+
+### Update an Existing Package (Admin Only - replace {id})
+PATCH {{baseUrl}}/api/packages/REPLACE_WITH_PACKAGE_ID
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "discountedPrice": 749,
+  "isPopular": true
+}
+
+### Delete a Package (Admin Only - replace {id})
+DELETE {{baseUrl}}/api/packages/REPLACE_WITH_PACKAGE_ID
+Authorization: Bearer {{authToken}}
+
+
+###############################################################################
+# 3. DIAGNOSTIC TESTS
+###############################################################################
+
+### List All Diagnostic Tests
+GET {{baseUrl}}/api/tests
+
+
+###############################################################################
+# 4. TESTIMONIALS
+###############################################################################
+
+### List All Featured Testimonials
+GET {{baseUrl}}/api/testimonials
+
+
+###############################################################################
+# 5. BLOGS
+###############################################################################
+
+### List All Published Blogs
+GET {{baseUrl}}/api/blogs
+
+
+###############################################################################
+# 6. CAMPAIGNS
+###############################################################################
+
+### List All Campaigns
+GET {{baseUrl}}/api/campaigns
+
+### Get Campaign by Slug or ID
+GET {{baseUrl}}/api/campaigns/monsoon-health-check
+
+### Create a Campaign (Admin Only)
+POST {{baseUrl}}/api/campaigns
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Summer Wellness 2026",
+  "slug": "summer-wellness-2026",
+  "title": "Summer Preventive Health Checkup",
+  "subtitle": "Beat the heat with essential health monitoring",
+  "description": "Hydration, electrolyte balance, and comprehensive metabolic screening.",
+  "ctaText": "Book Now",
+  "isActive": true
+}
+
+### Update Campaign (Admin Only - replace {id})
+PATCH {{baseUrl}}/api/campaigns/REPLACE_WITH_CAMPAIGN_ID
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "isActive": false
+}
+
+### Delete Campaign (Admin Only - replace {id})
+DELETE {{baseUrl}}/api/campaigns/REPLACE_WITH_CAMPAIGN_ID
+Authorization: Bearer {{authToken}}
+
+
+###############################################################################
+# 7. ENQUIRIES & BOOKINGS
+###############################################################################
+
+### Submit a Home Sample Collection Enquiry (Public)
+POST {{baseUrl}}/api/enquiries
+Content-Type: application/json
+
+{
+  "type": "HOME_COLLECTION",
+  "fullName": "Rahul Sharma",
+  "phone": "9876543210",
+  "email": "rahul.sharma@example.com",
+  "address": "Flat 302, Green Valley Apartments",
+  "city": "Hyderabad",
+  "pincode": "500081",
+  "preferredDate": "2026-09-25",
+  "preferredTime": "08:00 AM",
+  "message": "Fasting sample collection required.",
+  "testNames": [
+    "Complete Blood Count (CBC)",
+    "Thyroid Profile Total (T3, T4, TSH)"
+  ]
+}
+
+### Submit a Contact Enquiry (Public)
+POST {{baseUrl}}/api/enquiries
+Content-Type: application/json
+
+{
+  "type": "CONTACT",
+  "fullName": "Pooja Verma",
+  "phone": "9123456780",
+  "email": "pooja.verma@example.com",
+  "message": "Do you offer corporate health checkups for teams?"
+}
+
+### List Enquiries (Admin Only)
+GET {{baseUrl}}/api/enquiries?page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### Get Enquiry Dashboard Statistics (Admin Only)
+GET {{baseUrl}}/api/enquiries?mode=stats
+Authorization: Bearer {{authToken}}
+
+### Update Enquiry Status (Admin Only - replace {id})
+PATCH {{baseUrl}}/api/enquiries/REPLACE_WITH_ENQUIRY_ID
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "status": "CONTACTED"
+}
+
+
+###############################################################################
+# 8. HERO SECTION BANNER
+###############################################################################
+
+### Get Active Hero Section Configuration (Public)
+GET {{baseUrl}}/api/hero
+
+### Save / Update Hero Section Configuration (Admin Only)
+POST {{baseUrl}}/api/hero
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "badgeText": "Accurate Diagnostics, A Healthier Tomorrow",
+  "title": "Your Health Deserves a Clearer Picture.",
+  "subtitle": "Reliable diagnostic testing with convenient home sample collection.",
+  "buttonText": "Explore Packages",
+  "buttonLink": "/packages",
+  "imageUrl": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=1200"
+}
+
+### Delete Hero Section Image (Admin Only - removes from Cloudinary & DB)
+DELETE {{baseUrl}}/api/hero
+Authorization: Bearer {{authToken}}
+
