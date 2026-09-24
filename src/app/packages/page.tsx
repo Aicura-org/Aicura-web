@@ -6,6 +6,7 @@ import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import EnquireModal from '@/components/ui/EnquireModal';
+import PackageDetailsModal from '@/components/ui/PackageDetailsModal';
 import { PackageItem } from '@/types';
 import { CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 
@@ -34,16 +35,6 @@ export default function PackagesPage() {
     }
     loadPackages();
   }, []);
-
-  useEffect(() => {
-    if (detailModalPkg) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
-  }, [detailModalPkg]);
 
   const handleEnquire = (pkg: PackageItem) => {
     setSelectedPkg(pkg);
@@ -98,7 +89,10 @@ export default function PackagesPage() {
                 >
                   <div>
                     {/* Image Container */}
-                    <div className="relative h-48 w-full bg-slate-200 overflow-hidden">
+                    <div 
+                      onClick={() => setDetailModalPkg(pkg)}
+                      className="relative h-48 w-full bg-slate-200 overflow-hidden cursor-pointer"
+                    >
                       <Image
                         src={bgImg}
                         alt={pkg.title}
@@ -128,7 +122,10 @@ export default function PackagesPage() {
                         <span className="text-xs text-slate-400 font-medium">Home Sample Included</span>
                       </div>
 
-                      <h2 className="text-xl font-bold text-slate-900 group-hover:text-brand-700 transition-colors">
+                      <h2 
+                        onClick={() => setDetailModalPkg(pkg)}
+                        className="text-xl font-bold text-slate-900 group-hover:text-brand-700 transition-colors cursor-pointer"
+                      >
                         {pkg.title}
                       </h2>
 
@@ -149,6 +146,7 @@ export default function PackagesPage() {
                         </ul>
                         {pkg.includedTests.length > 4 && (
                           <button
+                            type="button"
                             onClick={() => setDetailModalPkg(pkg)}
                             className="text-xs text-brand-700 hover:text-brand-900 font-bold mt-2 flex items-center gap-1"
                           >
@@ -180,12 +178,14 @@ export default function PackagesPage() {
 
                     <div className="grid grid-cols-2 gap-2">
                       <button
+                        type="button"
                         onClick={() => setDetailModalPkg(pkg)}
                         className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-xl transition-colors"
                       >
                         Details & Tests
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleEnquire(pkg)}
                         className="w-full py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs rounded-xl shadow transition-transform hover:scale-105"
                       >
@@ -204,62 +204,16 @@ export default function PackagesPage() {
       <Footer />
       <WhatsAppBtn />
 
-      {/* Details Modal */}
-      {detailModalPkg && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 backdrop-blur-sm p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 space-y-4 shadow-2xl relative">
-            <button
-              onClick={() => setDetailModalPkg(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-800 text-lg font-bold"
-            >
-              ✕
-            </button>
-            <span className="text-xs font-bold text-brand-700 uppercase bg-emerald-50 px-2.5 py-1 rounded">
-              {detailModalPkg.category}
-            </span>
-            <h3 className="text-xl font-bold text-slate-900">{detailModalPkg.title}</h3>
-            <p className="text-xs text-slate-600">{detailModalPkg.description}</p>
-
-            {detailModalPkg.preparation && (
-              <div className="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-900">
-                <span className="font-bold block">Preparation:</span>
-                {detailModalPkg.preparation}
-              </div>
-            )}
-
-            <div className="border-t border-slate-100 pt-3">
-              <h4 className="text-xs font-bold text-slate-900 mb-2">All Included Tests ({detailModalPkg.includedTests.length}):</h4>
-              <ul className="space-y-2 max-h-60 overflow-y-auto pr-2 text-xs text-slate-700">
-                {detailModalPkg.includedTests.map((t, idx) => (
-                  <li key={idx} className="flex items-center gap-2 p-2 bg-slate-50 rounded-lg">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>{t}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex items-center justify-between border-t border-slate-100 pt-4">
-              <div>
-                <span className="text-xs text-slate-400">Total Price</span>
-                <div className="text-2xl font-black text-brand-700">
-                  ₹{detailModalPkg.discountedPrice.toLocaleString('en-IN')}
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  const pkg = detailModalPkg;
-                  setDetailModalPkg(null);
-                  handleEnquire(pkg);
-                }}
-                className="px-6 py-3 gold-gradient text-brand-900 font-bold text-xs rounded-xl shadow"
-              >
-                Enquire This Package →
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Package Details Modal */}
+      <PackageDetailsModal
+        isOpen={Boolean(detailModalPkg)}
+        onClose={() => setDetailModalPkg(null)}
+        pkg={detailModalPkg}
+        onEnquire={(pkg) => {
+          setDetailModalPkg(null);
+          handleEnquire(pkg);
+        }}
+      />
 
       {/* Enquire Modal */}
       <EnquireModal

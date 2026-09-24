@@ -269,6 +269,7 @@ export default function AdminHeroPage() {
       setDesktopUploading(true);
       const data = new FormData();
       data.append('file', file);
+      data.append('category', 'banner');
 
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -307,6 +308,7 @@ export default function AdminHeroPage() {
       setMobileUploading(true);
       const data = new FormData();
       data.append('file', file);
+      data.append('category', 'banner');
 
       const res = await fetch('/api/upload', {
         method: 'POST',

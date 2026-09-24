@@ -11,6 +11,7 @@ import {
   Megaphone,
   Sparkles,
   Bike,
+  Building,
   LogOut,
   ExternalLink,
   Menu,
@@ -74,6 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const navs = [
     { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'Hero Banner CMS', href: '/admin/hero', icon: Sparkles },
+    { label: 'About Us CMS', href: '/admin/about', icon: Building },
     { label: 'Home Collection CMS', href: '/admin/home-collection', icon: Bike },
     { label: 'Packages CMS', href: '/admin/packages', icon: Package },
     { label: 'Campaigns CMS', href: '/admin/campaigns', icon: Megaphone },

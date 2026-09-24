@@ -23,7 +23,10 @@ export interface HomeCollectionBannerProps {
 }
 
 export default function HomeCollectionBanner({ initialData }: HomeCollectionBannerProps) {
+  const [data, setData] = useState(initialData);
   const [modalOpen, setModalOpen] = useState(false);
+  const [bgError, setBgError] = useState(false);
+  const [bikeError, setBikeError] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const bikeRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
@@ -31,22 +34,41 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
   const [isReverse, setIsReverse] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
 
+  useEffect(() => {
+    setData(initialData);
+    setBgError(false);
+    setBikeError(false);
+  }, [initialData]);
+
+  useEffect(() => {
+    if (!initialData) {
+      fetch('/api/home-collection-banner')
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success && json.data) {
+            setData(json.data);
+          }
+        })
+        .catch(() => { });
+    }
+  }, [initialData]);
+
   // If set to inactive explicitly in admin, do not render
-  if (initialData?.isActive === false) {
+  if (data?.isActive === false) {
     return null;
   }
 
-  const badge = initialData?.badgeText || 'HOME COLLECTION';
-  const prefix = initialData?.titlePrefix || 'Healthcare that';
-  const highlight = initialData?.titleHighlight || 'comes home.';
+  const badge = data?.badgeText || 'HOME COLLECTION';
+  const prefix = data?.titlePrefix || 'Healthcare that';
+  const highlight = data?.titleHighlight || 'comes home.';
   const subtitle =
-    initialData?.subtitle ||
+    data?.subtitle ||
     'Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.';
-  const bgImage = initialData?.bgImageUrl || '';
-  const bikeImage = initialData?.bikeImageUrl || '';
-  const buttonText = initialData?.buttonText || 'Book Home Collection';
-  const buttonLink = initialData?.buttonLink || '/home-collection';
-  const animationEnabled = initialData?.animationEnabled !== false;
+  const bgImage = data?.bgImageUrl || '';
+  const bikeImage = data?.bikeImageUrl || '';
+  const buttonText = data?.buttonText || 'Book Home Collection';
+  const buttonLink = data?.buttonLink || '/home-collection';
+  const animationEnabled = data?.animationEnabled !== false;
 
   const isModalTrigger = !buttonLink || buttonLink === '#modal' || buttonLink.startsWith('modal');
 
@@ -113,10 +135,10 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
     <>
       <section
         ref={sectionRef}
-        className="relative w-full overflow-hidden border-y border-slate-200/80 bg-gradient-to-b from-sky-100/60 via-slate-50 to-slate-200 min-h-[380px] sm:min-h-[460px] lg:min-h-[520px] flex flex-col justify-between"
+        className="relative w-full overflow-hidden border-y border-slate-200/80 bg-gradient-to-b from-sky-100/60 via-slate-50 to-slate-200 min-h-[460px] sm:min-h-[520px] lg:min-h-[580px] flex flex-col justify-between"
       >
         {/* Full-width Background Image */}
-        {bgImage ? (
+        {bgImage && !bgError ? (
           <div className="absolute inset-0 z-0">
             <Image
               src={bgImage}
@@ -125,12 +147,13 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
               priority
               className="object-cover object-center w-full h-full"
               sizes="100vw"
+              onError={() => setBgError(true)}
             />
-            {/* Subtle overlay for text clarity */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/20 to-black/30" />
+            {/* Gradient overlay matching Admin live preview */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-black/20" />
           </div>
         ) : (
-          /* Fallback Full-width Scenery when no custom background image uploaded */
+          /* Fallback Full-width Scenery when no custom background image uploaded or on error */
           <div className="absolute inset-0 z-0 bg-gradient-to-b from-sky-200/60 via-slate-100 to-slate-300">
             <div className="absolute bottom-0 left-0 right-0 h-28 sm:h-36 lg:h-40 bg-slate-800 border-t-4 border-slate-700 flex items-center">
               <div className="w-full border-b-2 border-dashed border-white/60" />
@@ -140,22 +163,22 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
         )}
 
         {/* Top / Center Text Content */}
-        <div className="relative z-10 pt-10 sm:pt-14 lg:pt-16 px-4 sm:px-6 lg:px-8 text-center max-w-4xl mx-auto flex flex-col items-center">
+        <div className="relative z-10 pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-6 px-4 sm:px-6 lg:px-8 text-center max-w-3xl mx-auto flex flex-col items-center">
           {/* Badge */}
           {badge && (
-            <div className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md px-4 sm:px-5 py-1.5 rounded-full shadow-md border border-slate-200 mb-4 transition-transform hover:scale-105">
+            <div className="inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3.5 sm:px-4 py-1 rounded-full shadow-sm border border-slate-200 mb-2.5 transition-transform hover:scale-105">
               <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              <span className="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-slate-800">
+              <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-800">
                 {badge}
               </span>
             </div>
           )}
 
           {/* Main Heading */}
-          <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight drop-shadow-sm font-sans">
-            {prefix}{' '}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight drop-shadow-sm font-sans space-y-0.5">
+            {prefix && <span className="block">{prefix}</span>}
             {highlight && (
-              <span className="text-brand-700 underline decoration-yellow-400 decoration-4 underline-offset-4">
+              <span className="block text-brand-700 font-black">
                 {highlight}
               </span>
             )}
@@ -163,25 +186,25 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
 
           {/* Subtitle */}
           {subtitle && (
-            <p className="mt-3 sm:mt-4 text-sm sm:text-base lg:text-lg text-slate-700 font-medium max-w-2xl leading-relaxed drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]">
+            <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm lg:text-base text-slate-700 font-medium max-w-xl leading-relaxed drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]">
               {subtitle}
             </p>
           )}
 
-          {/* Action Button */}
+          {/* Action Button with generous bottom margin to clear the rider */}
           {buttonText && (
-            <div className="mt-5 sm:mt-6">
+            <div className="mt-4 sm:mt-5 mb-10 sm:mb-14 lg:mb-18">
               {isModalTrigger ? (
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="px-7 sm:px-9 py-3.5 sm:py-4 gold-gradient hover:gold-gradient-hover text-brand-900 font-extrabold text-sm sm:text-base rounded-full shadow-xl transition-all transform hover:scale-105 active:scale-95"
+                  className="px-6 sm:px-8 py-2.5 sm:py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-extrabold text-xs sm:text-sm rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95"
                 >
                   {buttonText} →
                 </button>
               ) : (
                 <Link
                   href={buttonLink}
-                  className="inline-block px-7 sm:px-9 py-3.5 sm:py-4 gold-gradient hover:gold-gradient-hover text-brand-900 font-extrabold text-sm sm:text-base rounded-full shadow-xl transition-all transform hover:scale-105 active:scale-95"
+                  className="inline-block px-6 sm:px-8 py-2.5 sm:py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-extrabold text-xs sm:text-sm rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95"
                 >
                   {buttonText} →
                 </Link>
@@ -190,13 +213,13 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
           )}
         </div>
 
-        {/* Full-width Road & Animated Travelling Bike */}
-        <div className="relative z-10 w-full h-28 sm:h-36 lg:h-44 overflow-hidden pointer-events-none">
-          {bikeImage ? (
+        {/* Full-width Road & Animated Travelling Bike (High z-index to avoid clipping) */}
+        <div className="relative z-30 w-full h-32 sm:h-44 lg:h-52 pointer-events-none">
+          {bikeImage && !bikeError ? (
             /* Custom Uploaded Transparent Bike Cutout */
             <div
               ref={bikeRef}
-              className="absolute bottom-2 sm:bottom-4 lg:bottom-6 w-40 sm:w-56 lg:w-72 h-24 sm:h-36 lg:h-44 transition-transform duration-300 ease-out will-change-transform"
+              className="absolute bottom-2 sm:bottom-4 lg:bottom-6 z-30 w-44 sm:w-64 lg:w-80 h-32 sm:h-44 lg:h-52 transition-transform duration-300 ease-out will-change-transform"
               style={{
                 left: animationEnabled ? '-12%' : '25%',
                 transform: isReverse ? 'scaleX(-1)' : 'scaleX(1)',
@@ -207,8 +230,9 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
                   src={bikeImage}
                   alt="Sample Collection Executive"
                   fill
-                  className="object-contain"
-                  sizes="(max-width: 640px) 180px, (max-width: 1024px) 240px, 300px"
+                  className="object-contain object-bottom"
+                  sizes="(max-width: 640px) 200px, (max-width: 1024px) 280px, 340px"
+                  onError={() => setBikeError(true)}
                 />
               </div>
             </div>
@@ -216,7 +240,7 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
             /* Fallback Graphic Bike Rider */
             <div
               ref={bikeRef}
-              className="absolute bottom-2 sm:bottom-4 lg:bottom-6 w-40 sm:w-56 lg:w-64 transition-transform duration-300 ease-out will-change-transform"
+              className="absolute bottom-2 sm:bottom-4 lg:bottom-6 z-30 w-40 sm:w-56 lg:w-64 transition-transform duration-300 ease-out will-change-transform"
               style={{
                 left: animationEnabled ? '-12%' : '25%',
                 transform: isReverse ? 'scaleX(-1)' : 'scaleX(1)',
@@ -233,7 +257,7 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
                   <rect x="29" y="36" width="30" height="26" rx="3" fill="#00796B" />
                   <text x="33" y="52" fill="#FACC15" fontSize="7" fontWeight="bold">AiCura</text>
                   <text x="33" y="59" fill="#FFFFFF" fontSize="5">Lab Care</text>
-                  
+
                   <circle cx="92" cy="22" r="11" fill="#0F172A" />
                   <rect x="94" y="22" width="10" height="4" rx="2" fill="#38BDF8" />
                   <path d="M78 35 L102 35 L96 68 L76 68 Z" fill="#005A5B" />
@@ -244,7 +268,7 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
                   <path d="M120 46 L138 60 L144 60 L128 44 Z" fill="#005A5B" />
                   <rect x="116" y="44" width="14" height="4" rx="2" fill="#334155" />
                   <circle cx="140" cy="58" r="4" fill="#FEF08A" />
-                  
+
                   <circle cx="50" cy="90" r="16" fill="#1E293B" stroke="#64748B" strokeWidth="4" />
                   <circle cx="50" cy="90" r="7" fill="#E2E8F0" />
                   <circle cx="142" cy="90" r="16" fill="#1E293B" stroke="#64748B" strokeWidth="4" />

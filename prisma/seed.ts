@@ -564,6 +564,59 @@ async function main() {
   }
   console.log(`✅ ${heroBannersData.length} Hero Carousel Banners seeded`);
 
+  // Home Collection Banner Seed
+  const existingHC = await prisma.homeCollectionBanner.findFirst();
+  if (!existingHC) {
+    await prisma.homeCollectionBanner.create({
+      data: {
+        badgeText: 'HOME COLLECTION',
+        titlePrefix: 'Healthcare that',
+        titleHighlight: 'comes home.',
+        subtitle: 'Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.',
+        buttonText: 'Book Home Collection',
+        buttonLink: '/home-collection',
+        animationSpeed: 12,
+        animationEnabled: true,
+        isActive: true,
+      },
+    });
+    console.log('✅ Home Collection Banner seeded');
+  }
+
+  // About Us Section Seed
+  const existingAbout = await prisma.aboutSection.findFirst();
+  if (!existingAbout) {
+    await prisma.aboutSection.create({
+      data: {
+        badgeText: 'About AiCura Diagnostics',
+        titlePrefix: 'Pioneering Clinical Precision &',
+        titleHighlight: 'Trusted Healthcare.',
+        description:
+          'At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.',
+        imageUrl:
+          'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000',
+        badge1Title: 'NABL Standard',
+        badge1Subtitle: 'Quality Assured Testing',
+        badge2Title: '99.8% Precision',
+        badge2Subtitle: 'Double Verified Results',
+        badge3Text: '10,000+ Happy Patients',
+        pillar1Title: 'Fully Automated Analyzers',
+        pillar1Desc: 'Advanced robotic equipment ensuring error-free testing with rapid turnaround.',
+        pillar2Title: 'NABL & ISO Compliant',
+        pillar2Desc: 'Standardized protocols matching the highest global benchmarks for diagnostic accuracy.',
+        pillar3Title: 'MD Pathologist Verified',
+        pillar3Desc: 'Every diagnostic report is validated by veteran senior pathologists.',
+        pillar4Title: 'Same-Day Digital Reports',
+        pillar4Desc: 'Prompt delivery of secure, comprehensive reports directly via WhatsApp & Email.',
+        primaryBtnText: 'Learn More About Us',
+        primaryBtnLink: '/about',
+        secondaryBtnText: 'Contact Our Lab',
+        isActive: true,
+      },
+    });
+    console.log('✅ About Us section seeded');
+  }
+
   console.log('🎉 Database seeding completed successfully!');
 }
 

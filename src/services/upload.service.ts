@@ -1,7 +1,12 @@
-import { uploadToCloudinary, deleteFromCloudinary } from '@/lib/cloudinary';
+import { uploadToCloudinary, deleteFromCloudinary, ImageCategory } from '@/lib/cloudinary';
 
 export const UploadService = {
-  async uploadImage(fileBuffer: Buffer, fileName?: string, mimeType: string = 'image/jpeg'): Promise<{ url: string; public_id: string }> {
+  async uploadImage(
+    fileBuffer: Buffer,
+    fileName?: string,
+    mimeType: string = 'image/jpeg',
+    category: ImageCategory = 'general'
+  ): Promise<{ url: string; public_id: string }> {
     const isCloudinaryConfigured = Boolean(
       process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
       process.env.CLOUDINARY_API_KEY &&
@@ -15,7 +20,7 @@ export const UploadService = {
     }
 
     try {
-      const result = await uploadToCloudinary(fileBuffer, 'aicura-diagnostics');
+      const result = await uploadToCloudinary(fileBuffer, { category });
       return result;
     } catch (err: any) {
       console.error('Cloudinary upload error:', err);

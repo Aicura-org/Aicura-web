@@ -7,7 +7,7 @@ import Footer from '@/components/layout/Footer';
 import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import { CampaignService } from '@/services/campaign.service';
 import CampaignEnquiryForm from '@/components/campaign/CampaignEnquiryForm';
-import { ShieldCheck, CheckCircle2, Clock, MapPin, Sparkles } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, Clock, MapPin, Megaphone } from 'lucide-react';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -50,7 +50,7 @@ export default async function CampaignPublicPage({ params }: Props) {
               {/* Headline & Info */}
               <div className="lg:col-span-7 space-y-6">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-yellow-400 text-brand-900 uppercase tracking-wide">
-                  <Sparkles className="w-3.5 h-3.5" /> Special Diagnostic Drive
+                  <Megaphone className="w-3.5 h-3.5" /> Special Diagnostic Drive
                 </span>
 
                 <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-tight font-sans">

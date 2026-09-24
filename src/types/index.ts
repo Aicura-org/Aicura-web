@@ -198,3 +198,33 @@ export interface EnquiryFilterParams {
   page?: number;
   limit?: number;
 }
+
+export interface AboutSectionItem {
+  id: string;
+  badgeText?: string | null;
+  titlePrefix?: string | null;
+  titleHighlight?: string | null;
+  description?: string | null;
+  imageUrl?: string | null;
+  imagePublicId?: string | null;
+  badge1Title?: string | null;
+  badge1Subtitle?: string | null;
+  badge2Title?: string | null;
+  badge2Subtitle?: string | null;
+  badge3Text?: string | null;
+  pillar1Title?: string | null;
+  pillar1Desc?: string | null;
+  pillar2Title?: string | null;
+  pillar2Desc?: string | null;
+  pillar3Title?: string | null;
+  pillar3Desc?: string | null;
+  pillar4Title?: string | null;
+  pillar4Desc?: string | null;
+  primaryBtnText?: string | null;
+  primaryBtnLink?: string | null;
+  secondaryBtnText?: string | null;
+  isActive: boolean;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+

@@ -17,7 +17,7 @@ export default function Header() {
     { label: 'Health Packages', href: '/packages' },
     { label: 'Home Collection', href: '/home-collection' },
     { label: 'About Us', href: '/about' },
-    { label: 'Resources', href: '/blog' },
+    { label: 'Campaigns', href: '/campaigns' },
   ];
 
   const isActive = (href: string) => {

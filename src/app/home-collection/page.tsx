@@ -30,6 +30,7 @@ export default function HomeCollectionPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('category', 'prescription');
       const res = await fetch('/api/upload', {
         method: 'POST',
         body: formData,

@@ -51,6 +51,7 @@ export default function AdminCampaignsPage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
+      formData.append('category', 'banner');
       const res = await fetch('/api/upload', {
         method: 'POST',
         body: formData,

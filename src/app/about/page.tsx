@@ -1,13 +1,71 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
-import { ShieldCheck, Award, Heart, CheckCircle2, Users, Microchip, Building } from 'lucide-react';
+import { ShieldCheck, Award, Heart, Users, Microchip } from 'lucide-react';
+
+interface AboutData {
+  badgeText: string;
+  titlePrefix: string;
+  titleHighlight: string;
+  description: string;
+  imageUrl: string;
+  badge1Title: string;
+  badge1Subtitle: string;
+  badge2Title: string;
+  badge2Subtitle: string;
+  badge3Text: string;
+}
+
+const defaultAbout: AboutData = {
+  badgeText: 'About AiCura Diagnostics',
+  titlePrefix: 'Pioneering Clinical Precision &',
+  titleHighlight: 'Trusted Healthcare.',
+  description:
+    'At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.',
+  imageUrl:
+    'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000',
+  badge1Title: 'NABL Standard',
+  badge1Subtitle: 'Quality Assured Testing',
+  badge2Title: '99.8% Precision',
+  badge2Subtitle: 'Double Verified Results',
+  badge3Text: '10,000+ Happy Patients',
+};
 
 export default function AboutPage() {
+  const [about, setAbout] = useState<AboutData>(defaultAbout);
+
+  useEffect(() => {
+    async function loadAbout() {
+      try {
+        const res = await fetch('/api/about');
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setAbout({
+              badgeText: json.data.badgeText || defaultAbout.badgeText,
+              titlePrefix: json.data.titlePrefix || defaultAbout.titlePrefix,
+              titleHighlight: json.data.titleHighlight || defaultAbout.titleHighlight,
+              description: json.data.description || defaultAbout.description,
+              imageUrl: json.data.imageUrl || defaultAbout.imageUrl,
+              badge1Title: json.data.badge1Title || defaultAbout.badge1Title,
+              badge1Subtitle: json.data.badge1Subtitle || defaultAbout.badge1Subtitle,
+              badge2Title: json.data.badge2Title || defaultAbout.badge2Title,
+              badge2Subtitle: json.data.badge2Subtitle || defaultAbout.badge2Subtitle,
+              badge3Text: json.data.badge3Text || defaultAbout.badge3Text,
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed fetching dynamic about info:', err);
+      }
+    }
+    loadAbout();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Header />
@@ -36,32 +94,32 @@ export default function AboutPage() {
               Our Journey & Mission
             </span>
             <h2 className="text-3xl font-extrabold text-slate-900 font-sans leading-tight">
-              Pioneering Clinical Precision for a Healthier Community
+              {about.titlePrefix} {about.titleHighlight}
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              Founded with the vision to make advanced, accredited diagnostic testing accessible and seamless for everyone, AiCura Diagnostics combines automated laboratory analyzers with seasoned medical expertise.
+              {about.description}
             </p>
             <p className="text-slate-600 text-sm leading-relaxed">
               From routine blood screenings to specialized hormonal and genetic panels, every specimen undergoes rigorous multi-tier quality checks to ensure flawless clinical accuracy.
             </p>
 
             <div className="grid grid-cols-2 gap-4 pt-4 text-xs font-semibold text-slate-800">
-              <div className="flex items-center gap-2 bg-white p-3 rounded-xl border border-slate-200">
+              <div className="flex items-center gap-2 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
                 <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                <span>NABL Accredited Standard</span>
+                <span>{about.badge1Title}</span>
               </div>
-              <div className="flex items-center gap-2 bg-white p-3 rounded-xl border border-slate-200">
+              <div className="flex items-center gap-2 bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
                 <Award className="w-5 h-5 text-yellow-500" />
-                <span>ISO 9001:2015 Certified</span>
+                <span>{about.badge2Title}</span>
               </div>
             </div>
           </div>
 
           <div className="lg:col-span-6 relative">
-            <div className="relative h-96 w-full rounded-3xl overflow-hidden border border-slate-200 shadow-xl">
+            <div className="relative h-96 w-full rounded-3xl overflow-hidden border border-slate-200 shadow-xl bg-slate-900">
               <Image
-                src="https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=800"
-                alt="AiCura Diagnostic Laboratory equipment"
+                src={about.imageUrl || defaultAbout.imageUrl}
+                alt="AiCura Diagnostic Laboratory facility"
                 fill
                 className="object-cover"
               />
