@@ -4,6 +4,8 @@ import { getAdminFromRequest } from '@/lib/auth';
 import { successResponse, unauthorizedResponse, internalErrorResponse } from '@/lib/api-response';
 import { UploadService } from '@/services/upload.service';
 
+import { revalidatePath } from 'next/cache';
+
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
@@ -12,9 +14,9 @@ const DEFAULT_BANNER = {
   titlePrefix: 'Healthcare that',
   titleHighlight: 'comes home.',
   subtitle: 'Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.',
-  bgImageUrl: '/images/home-collection/banner-bg.webp',
+  bgImageUrl: '',
   bgImagePublicId: null,
-  bikeImageUrl: '/images/home-collection/bike-rider.png',
+  bikeImageUrl: '',
   bikeImagePublicId: null,
   buttonText: 'Book Home Collection',
   buttonLink: '/home-collection',
@@ -137,6 +139,9 @@ export async function POST(req: NextRequest) {
         },
       });
     }
+
+    revalidatePath('/');
+    revalidatePath('/admin/home-collection');
 
     return successResponse(savedBanner, 'Home collection banner saved successfully');
   } catch (error) {

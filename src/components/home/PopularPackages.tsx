@@ -3,15 +3,18 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Loader2 } from 'lucide-react';
+import { ArrowRight, Loader2, Eye } from 'lucide-react';
 import { PackageItem } from '@/types';
 import EnquireModal from '../ui/EnquireModal';
+import PackageDetailsModal from '../ui/PackageDetailsModal';
 
 export default function PopularPackages() {
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPkg, setSelectedPkg] = useState<PackageItem | null>(null);
+  const [detailPkg, setDetailPkg] = useState<PackageItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchPackages() {
@@ -35,6 +38,11 @@ export default function PopularPackages() {
   const handleEnquire = (pkg: PackageItem) => {
     setSelectedPkg(pkg);
     setIsModalOpen(true);
+  };
+
+  const handleViewDetails = (pkg: PackageItem) => {
+    setDetailPkg(pkg);
+    setIsDetailModalOpen(true);
   };
 
   const defaultImages: Record<string, string> = {
@@ -86,8 +94,12 @@ export default function PopularPackages() {
                     className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1"
                   >
                     <div>
-                      {/* Image Header */}
-                      <div className="relative h-40 w-full overflow-hidden bg-slate-200">
+                      {/* Image Header - Clickable for details */}
+                      <div 
+                        onClick={() => handleViewDetails(pkg)}
+                        className="relative h-40 w-full overflow-hidden bg-slate-200 cursor-pointer"
+                        title="Click to view package details"
+                      >
                         <Image
                           src={bgImg}
                           alt={pkg.title}
@@ -99,11 +111,19 @@ export default function PopularPackages() {
                             {pkg.badgeText}
                           </div>
                         )}
+                        <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="bg-white/95 text-slate-900 text-[11px] font-bold px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5 backdrop-blur-xs">
+                            <Eye className="w-3.5 h-3.5 text-brand-700" /> View Details
+                          </span>
+                        </div>
                       </div>
 
                       {/* Card Content */}
                       <div className="p-4 space-y-2">
-                        <h3 className="text-base font-bold text-slate-900 leading-snug group-hover:text-brand-700 transition-colors">
+                        <h3 
+                          onClick={() => handleViewDetails(pkg)}
+                          className="text-base font-bold text-slate-900 leading-snug group-hover:text-brand-700 transition-colors cursor-pointer"
+                        >
                           {pkg.title}
                         </h3>
                         <div className="text-xs font-semibold text-emerald-700 bg-emerald-100/70 inline-block px-2.5 py-0.5 rounded-md">
@@ -115,7 +135,7 @@ export default function PopularPackages() {
                       </div>
                     </div>
 
-                    {/* Pricing & Footer Button */}
+                    {/* Pricing & Footer Buttons */}
                     <div className="p-4 pt-0 space-y-3">
                       <div className="flex items-baseline gap-2 border-t border-slate-200 pt-3">
                         <span className="text-xs text-slate-400 line-through font-medium">
@@ -126,12 +146,24 @@ export default function PopularPackages() {
                         </span>
                       </div>
 
-                      <button
-                        onClick={() => handleEnquire(pkg)}
-                        className="w-full py-2.5 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs rounded-xl shadow-sm transition-all hover:scale-[1.02] active:scale-95"
-                      >
-                        Enquire Now
-                      </button>
+                      <div className="grid grid-cols-1 gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleViewDetails(pkg)}
+                          className="w-full py-2 bg-white hover:bg-slate-100 text-slate-700 hover:text-brand-800 font-semibold text-xs rounded-xl border border-slate-300 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-slate-500" />
+                          <span>View Details</span>
+                        </button>
+
+                        <button
+                          type="button"
+                          onClick={() => handleEnquire(pkg)}
+                          className="w-full py-2.5 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs rounded-xl shadow-sm transition-all hover:scale-[1.02] active:scale-95"
+                        >
+                          Enquire Now
+                        </button>
+                      </div>
                     </div>
 
                   </div>
@@ -142,6 +174,17 @@ export default function PopularPackages() {
 
         </div>
       </section>
+
+      {/* Full Package Details Modal */}
+      <PackageDetailsModal
+        isOpen={isDetailModalOpen}
+        onClose={() => setIsDetailModalOpen(false)}
+        pkg={detailPkg}
+        onEnquire={(pkg) => {
+          setIsDetailModalOpen(false);
+          handleEnquire(pkg);
+        }}
+      />
 
       {/* Enquiry Modal */}
       <EnquireModal
@@ -154,3 +197,4 @@ export default function PopularPackages() {
     </>
   );
 }
+

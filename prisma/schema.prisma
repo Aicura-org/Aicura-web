@@ -237,5 +237,34 @@ model HomeCollectionBanner {
   updatedAt         DateTime @updatedAt
 }
 
+model AboutSection {
+  id                String   @id @default(cuid())
+  badgeText         String?  @default("About AiCura Diagnostics")
+  titlePrefix       String?  @default("Pioneering Clinical Precision &")
+  titleHighlight    String?  @default("Trusted Healthcare.")
+  description       String?  @default("At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.")
+  imageUrl          String?  @default("https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000")
+  imagePublicId     String?
+  badge1Title       String?  @default("NABL Standard")
+  badge1Subtitle    String?  @default("Quality Assured Testing")
+  badge2Title       String?  @default("99.8% Precision")
+  badge2Subtitle    String?  @default("Double Verified Results")
+  badge3Text        String?  @default("10,000+ Happy Patients")
+  pillar1Title      String?  @default("Fully Automated Analyzers")
+  pillar1Desc       String?  @default("Advanced robotic equipment ensuring error-free testing with rapid turnaround.")
+  pillar2Title      String?  @default("NABL & ISO Compliant")
+  pillar2Desc       String?  @default("Standardized protocols matching the highest global benchmarks for diagnostic accuracy.")
+  pillar3Title      String?  @default("MD Pathologist Verified")
+  pillar3Desc       String?  @default("Every diagnostic report is validated by veteran senior pathologists.")
+  pillar4Title      String?  @default("Same-Day Digital Reports")
+  pillar4Desc       String?  @default("Prompt delivery of secure, comprehensive reports directly via WhatsApp & Email.")
+  primaryBtnText    String?  @default("Learn More About Us")
+  primaryBtnLink    String?  @default("/about")
+  secondaryBtnText  String?  @default("Contact Our Lab")
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
 
 

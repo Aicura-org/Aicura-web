@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import {
   Upload,
@@ -18,6 +18,7 @@ import {
   Sliders,
   Type,
   ImageIcon,
+  RotateCcw,
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -56,6 +57,7 @@ const defaultData: HomeCollectionData = {
 
 export default function AdminHomeCollectionPage() {
   const [formData, setFormData] = useState<HomeCollectionData>(defaultData);
+  const [savedData, setSavedData] = useState<HomeCollectionData>(defaultData);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -63,11 +65,13 @@ export default function AdminHomeCollectionPage() {
   const [bgMode, setBgMode] = useState<'upload' | 'url'>('upload');
   const [bgPastedUrl, setBgPastedUrl] = useState('');
   const [bgUploading, setBgUploading] = useState(false);
+  const [previewBgError, setPreviewBgError] = useState(false);
 
   // Bike upload states
   const [bikeMode, setBikeMode] = useState<'upload' | 'url'>('upload');
   const [bikePastedUrl, setBikePastedUrl] = useState('');
   const [bikeUploading, setBikeUploading] = useState(false);
+  const [previewBikeError, setPreviewBikeError] = useState(false);
 
   // Preview animation toggle
   const [previewPlaying, setPreviewPlaying] = useState(true);
@@ -78,9 +82,27 @@ export default function AdminHomeCollectionPage() {
   const bgFileInputRef = useRef<HTMLInputElement>(null);
   const bikeFileInputRef = useRef<HTMLInputElement>(null);
 
+  // Detect unsaved changes compared to baseline saved state
+  const isDirty = useMemo(() => {
+    if (loading) return false;
+    return JSON.stringify(formData) !== JSON.stringify(savedData);
+  }, [formData, savedData, loading]);
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  // Prevent accidental tab close when unsaved changes exist
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [isDirty]);
 
   const showNotice = (type: 'success' | 'error', message: string) => {
     setNotification({ type, message });
@@ -95,30 +117,53 @@ export default function AdminHomeCollectionPage() {
       const res = await fetch('/api/home-collection-banner');
       const json = await res.json();
       if (json.success && json.data) {
-        setFormData({
+        const cleanBg =
+          json.data.bgImageUrl && !json.data.bgImageUrl.startsWith('/images/home-collection')
+            ? json.data.bgImageUrl
+            : '';
+        const cleanBike =
+          json.data.bikeImageUrl && !json.data.bikeImageUrl.startsWith('/images/home-collection')
+            ? json.data.bikeImageUrl
+            : '';
+
+        const loadedData: HomeCollectionData = {
           id: json.data.id,
           badgeText: json.data.badgeText ?? defaultData.badgeText,
           titlePrefix: json.data.titlePrefix ?? defaultData.titlePrefix,
           titleHighlight: json.data.titleHighlight ?? defaultData.titleHighlight,
           subtitle: json.data.subtitle ?? defaultData.subtitle,
-          bgImageUrl: json.data.bgImageUrl ?? '',
+          bgImageUrl: cleanBg,
           bgImagePublicId: json.data.bgImagePublicId ?? null,
-          bikeImageUrl: json.data.bikeImageUrl ?? '',
+          bikeImageUrl: cleanBike,
           bikeImagePublicId: json.data.bikeImagePublicId ?? null,
           buttonText: json.data.buttonText ?? defaultData.buttonText,
           buttonLink: json.data.buttonLink ?? defaultData.buttonLink,
           animationSpeed: json.data.animationSpeed ?? defaultData.animationSpeed,
           animationEnabled: json.data.animationEnabled ?? defaultData.animationEnabled,
           isActive: json.data.isActive ?? true,
-        });
-        setBgPastedUrl(json.data.bgImageUrl ?? '');
-        setBikePastedUrl(json.data.bikeImageUrl ?? '');
+        };
+
+        setFormData(loadedData);
+        setSavedData(loadedData);
+        setBgPastedUrl(cleanBg);
+        setBikePastedUrl(cleanBike);
+        setPreviewBgError(false);
+        setPreviewBikeError(false);
       }
     } catch (err: any) {
       showNotice('error', err.message || 'Failed to load Home Collection banner settings');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleDiscard = () => {
+    setFormData({ ...savedData });
+    setBgPastedUrl(savedData.bgImageUrl || '');
+    setBikePastedUrl(savedData.bikeImageUrl || '');
+    setPreviewBgError(false);
+    setPreviewBikeError(false);
+    showNotice('success', 'Unsaved changes discarded.');
   };
 
   const handleBgFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,6 +179,7 @@ export default function AdminHomeCollectionPage() {
       setBgUploading(true);
       const data = new FormData();
       data.append('file', file);
+      data.append('category', 'banner');
 
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -195,6 +241,7 @@ export default function AdminHomeCollectionPage() {
       setBikeUploading(true);
       const data = new FormData();
       data.append('file', file);
+      data.append('category', 'icon');
 
       const res = await fetch('/api/upload', {
         method: 'POST',
@@ -257,9 +304,9 @@ export default function AdminHomeCollectionPage() {
         throw new Error(json.message || 'Failed to save settings');
       }
 
-      if (json.data) {
-        setFormData((prev) => ({ ...prev, id: json.data.id }));
-      }
+      const updated = json.data ? { ...formData, id: json.data.id } : { ...formData };
+      setFormData(updated);
+      setSavedData(updated);
       showNotice('success', 'Home Collection Banner settings saved successfully!');
     } catch (err: any) {
       showNotice('error', err.message || 'Error saving settings');
@@ -281,6 +328,54 @@ export default function AdminHomeCollectionPage() {
 
   return (
     <AdminLayout>
+      {/* Shopify-Style Floating Sticky Top Save / Discard Bar */}
+      <div
+        className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 transform ${
+          isDirty
+            ? 'translate-y-0 opacity-100 scale-100 pointer-events-auto'
+            : '-translate-y-16 opacity-0 scale-95 pointer-events-none'
+        }`}
+      >
+        <div className="bg-slate-900/95 backdrop-blur-md text-white px-5 py-2.5 sm:px-6 sm:py-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-4 sm:gap-6 ring-1 ring-white/10">
+          <div className="flex items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-xs sm:text-sm font-semibold tracking-wide text-slate-200">
+              Unsaved changes
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleDiscard}
+              disabled={saving}
+              className="px-3.5 py-1.5 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 rounded-xl transition disabled:opacity-50 flex items-center gap-1.5"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span>Discard</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="px-4 py-1.5 text-xs font-bold text-slate-950 bg-yellow-400 hover:bg-yellow-300 rounded-xl shadow-md transition flex items-center gap-1.5 disabled:opacity-50"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Saving...</span>
+                </>
+              ) : (
+                <>
+                  <Save className="w-3.5 h-3.5" />
+                  <span>Save</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="space-y-8 max-w-7xl mx-auto pb-16">
         
         {/* Notification Toast */}
@@ -318,10 +413,25 @@ export default function AdminHomeCollectionPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            {isDirty && (
+              <button
+                type="button"
+                onClick={handleDiscard}
+                disabled={saving}
+                className="flex items-center gap-1.5 px-4 py-2.5 border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold text-xs rounded-xl transition"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Discard</span>
+              </button>
+            )}
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-6 py-2.5 bg-brand-700 hover:bg-brand-800 text-white font-bold text-sm rounded-xl shadow-md transition-all disabled:opacity-50"
+              className={`flex items-center gap-2 px-6 py-2.5 font-bold text-sm rounded-xl shadow-md transition-all disabled:opacity-50 ${
+                isDirty
+                  ? 'bg-yellow-400 hover:bg-yellow-300 text-slate-950 ring-2 ring-yellow-400/50'
+                  : 'bg-brand-700 hover:bg-brand-800 text-white'
+              }`}
             >
               {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               <span>Save Changes</span>
@@ -351,16 +461,17 @@ export default function AdminHomeCollectionPage() {
           </div>
 
           {/* Banner Preview Area */}
-          <div className="relative w-full rounded-3xl overflow-hidden shadow-xl border border-slate-200 min-h-[300px] sm:min-h-[360px] flex flex-col justify-between bg-slate-100">
+          <div className="relative w-full rounded-3xl overflow-hidden shadow-xl border border-slate-200 min-h-[360px] sm:min-h-[420px] flex flex-col justify-between bg-slate-100">
             
             {/* Background Image Preview */}
-            {formData.bgImageUrl ? (
+            {formData.bgImageUrl && !previewBgError ? (
               <div className="absolute inset-0 z-0">
                 <Image
                   src={formData.bgImageUrl}
                   alt="Preview Background"
                   fill
                   className="object-cover object-center"
+                  onError={() => setPreviewBgError(true)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-transparent to-black/20" />
               </div>
@@ -384,10 +495,10 @@ export default function AdminHomeCollectionPage() {
                 </div>
               )}
 
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-tight">
-                {formData.titlePrefix}{' '}
+              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-tight space-y-0.5">
+                {formData.titlePrefix && <span className="block">{formData.titlePrefix}</span>}
                 {formData.titleHighlight && (
-                  <span className="text-brand-700 underline decoration-yellow-400 decoration-2 underline-offset-4">
+                  <span className="block text-brand-700 font-black">
                     {formData.titleHighlight}
                   </span>
                 )}
@@ -400,7 +511,7 @@ export default function AdminHomeCollectionPage() {
               )}
 
               {formData.buttonText && (
-                <div className="mt-3">
+                <div className="mt-3 mb-6 sm:mb-8">
                   <span className="inline-block px-5 py-2 gold-gradient text-brand-900 font-extrabold text-xs rounded-full shadow cursor-pointer">
                     {formData.buttonText} →
                   </span>
@@ -409,10 +520,10 @@ export default function AdminHomeCollectionPage() {
             </div>
 
             {/* Bike Animation Preview */}
-            <div className="relative z-10 w-full h-24 overflow-hidden pointer-events-none">
-              {formData.bikeImageUrl ? (
+            <div className="relative z-30 w-full h-28 sm:h-32 pointer-events-none">
+              {formData.bikeImageUrl && !previewBikeError ? (
                 <div
-                  className={`absolute bottom-2 w-32 sm:w-40 h-20 ${
+                  className={`absolute bottom-2 z-30 w-36 sm:w-48 h-28 sm:h-32 ${
                     formData.animationEnabled && previewPlaying ? 'preview-bike-drive' : 'left-1/3'
                   }`}
                   style={{
@@ -425,6 +536,7 @@ export default function AdminHomeCollectionPage() {
                       alt="Bike Preview"
                       fill
                       className="object-contain"
+                      onError={() => setPreviewBikeError(true)}
                     />
                   </div>
                 </div>
@@ -549,9 +661,15 @@ export default function AdminHomeCollectionPage() {
               </div>
             )}
 
-            {formData.bgImageUrl && (
+            {formData.bgImageUrl && !previewBgError && (
               <div className="relative h-28 w-full rounded-xl overflow-hidden border border-slate-200">
-                <Image src={formData.bgImageUrl} alt="Current BG" fill className="object-cover" />
+                <Image
+                  src={formData.bgImageUrl}
+                  alt="Current BG"
+                  fill
+                  className="object-cover"
+                  onError={() => setPreviewBgError(true)}
+                />
                 <div className="absolute bottom-1 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded font-mono truncate max-w-[200px]">
                   {formData.bgImageUrl}
                 </div>
@@ -657,9 +775,15 @@ export default function AdminHomeCollectionPage() {
               </div>
             )}
 
-            {formData.bikeImageUrl && (
+            {formData.bikeImageUrl && !previewBikeError && (
               <div className="relative h-28 w-full rounded-xl overflow-hidden border border-slate-200 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:12px_12px]">
-                <Image src={formData.bikeImageUrl} alt="Current Bike" fill className="object-contain p-2" />
+                <Image
+                  src={formData.bikeImageUrl}
+                  alt="Current Bike"
+                  fill
+                  className="object-contain p-2"
+                  onError={() => setPreviewBikeError(true)}
+                />
                 <div className="absolute bottom-1 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded font-mono truncate max-w-[200px]">
                   {formData.bikeImageUrl}
                 </div>

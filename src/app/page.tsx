@@ -15,6 +15,9 @@ import FAQSection from '@/components/home/FAQSection';
 import CTABanner from '@/components/home/CTABanner';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'AiCura Diagnostics | Reliable Lab Testing & Home Sample Collection',
   description: 'Book diagnostic lab tests and health packages online with doorstep home sample collection across Kochi & Kerala. NABL compliant accredited lab reports.',
@@ -53,10 +56,24 @@ async function getHomeCollectionBanner() {
   }
 }
 
+async function getAboutSection() {
+  try {
+    const about = await prisma.aboutSection.findFirst({
+      where: { isActive: true },
+      orderBy: { updatedAt: 'desc' },
+    });
+    return about;
+  } catch (error) {
+    console.error('Failed fetching about section server-side:', error);
+    return null;
+  }
+}
+
 export default async function HomePage() {
-  const [heroBanners, homeCollectionBanner] = await Promise.all([
+  const [heroBanners, homeCollectionBanner, aboutSection] = await Promise.all([
     getHeroBanners(),
     getHomeCollectionBanner(),
+    getAboutSection(),
   ]);
 
   return (
@@ -66,7 +83,7 @@ export default async function HomePage() {
         <HeroSection initialBanners={heroBanners} />
         <QuickActions />
         <PopularPackages />
-        <DoorstepCare />
+        <DoorstepCare initialData={aboutSection} />
         <HomeCollectionBanner initialData={homeCollectionBanner} />
         <HowItWorks />
         <WhyAiCura />

@@ -6,7 +6,7 @@
     "dev": "next dev",
     "dev:clean": "npx rimraf .next && next dev",
     "clean": "npx rimraf .next",
-    "build": "npx rimraf .next && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
