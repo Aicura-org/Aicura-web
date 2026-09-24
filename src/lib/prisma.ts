@@ -2,9 +2,19 @@ import { PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 
-const connectionString = `${process.env.DATABASE_URL}`;
+const connectionString = process.env.DATABASE_URL;
 
-const pool = new Pool({ connectionString });
+if (!connectionString) {
+  console.error('[Prisma] CRITICAL: DATABASE_URL environment variable is missing.');
+}
+
+const isLocalhost = connectionString?.includes('localhost') || connectionString?.includes('127.0.0.1');
+
+const pool = new Pool({
+  connectionString,
+  ssl: isLocalhost ? false : { rejectUnauthorized: false },
+  max: 10,
+});
 const adapter = new PrismaPg(pool);
 
 const globalForPrisma = globalThis as unknown as {
