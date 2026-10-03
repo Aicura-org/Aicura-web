@@ -2,9 +2,6 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import EnquireModal from '@/components/ui/EnquireModal';
 import { Search, Filter, Droplet, Clock, AlertCircle, Loader2 } from 'lucide-react';
 
@@ -70,9 +67,7 @@ function TestsContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <Header />
-      
+    <div className="min-h-screen flex flex-col bg-slate-50">      
       {/* Banner */}
       <div className="hero-gradient text-white py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center space-y-3">
@@ -209,10 +204,6 @@ function TestsContent() {
         )}
 
       </main>
-
-      <Footer />
-      <WhatsAppBtn />
-
       <EnquireModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -3,9 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import { Clock, Loader2 } from 'lucide-react';
 
 interface BlogItem {
@@ -44,8 +41,6 @@ export default function BlogListPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
-      <Header />
-
       {/* Banner */}
       <div className="hero-gradient text-white py-14 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center space-y-3">
@@ -113,10 +108,6 @@ export default function BlogListPage() {
             ))}
           </div>
         )}
-      </main>
-
-      <Footer />
-      <WhatsAppBtn />
-    </div>
+      </main>    </div>
   );
 }

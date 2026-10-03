@@ -12,12 +12,14 @@ export const revalidate = 0;
 const DEFAULT_BANNER = {
   badgeText: 'HOME COLLECTION',
   titlePrefix: 'Healthcare that',
-  titleHighlight: 'comes home.',
+  titleHighlight: 'comes home',
   subtitle: 'Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.',
   bgImageUrl: '',
   bgImagePublicId: null,
   bikeImageUrl: '',
   bikeImagePublicId: null,
+  bikeReturnImageUrl: '',
+  bikeReturnImagePublicId: null,
   buttonText: 'Book Home Collection',
   buttonLink: '/home-collection',
   animationSpeed: 14,
@@ -62,6 +64,8 @@ export async function POST(req: NextRequest) {
       bgImagePublicId,
       bikeImageUrl,
       bikeImagePublicId,
+      bikeReturnImageUrl,
+      bikeReturnImagePublicId,
       buttonText,
       buttonLink,
       animationSpeed,
@@ -102,6 +106,19 @@ export async function POST(req: NextRequest) {
         }
       }
 
+      // If return bike image was replaced and had old public_id, cleanup old Cloudinary asset
+      if (
+        targetBanner.bikeReturnImagePublicId &&
+        bikeReturnImagePublicId !== targetBanner.bikeReturnImagePublicId &&
+        bikeReturnImageUrl !== targetBanner.bikeReturnImageUrl
+      ) {
+        try {
+          await UploadService.deleteImage(targetBanner.bikeReturnImagePublicId);
+        } catch (err) {
+          console.error('Failed to cleanup old return bike image:', err);
+        }
+      }
+
       savedBanner = await prisma.homeCollectionBanner.update({
         where: { id: targetBanner.id },
         data: {
@@ -113,6 +130,8 @@ export async function POST(req: NextRequest) {
           bgImagePublicId: bgImagePublicId !== undefined ? bgImagePublicId : targetBanner.bgImagePublicId,
           bikeImageUrl: bikeImageUrl !== undefined ? bikeImageUrl : targetBanner.bikeImageUrl,
           bikeImagePublicId: bikeImagePublicId !== undefined ? bikeImagePublicId : targetBanner.bikeImagePublicId,
+          bikeReturnImageUrl: bikeReturnImageUrl !== undefined ? bikeReturnImageUrl : targetBanner.bikeReturnImageUrl,
+          bikeReturnImagePublicId: bikeReturnImagePublicId !== undefined ? bikeReturnImagePublicId : targetBanner.bikeReturnImagePublicId,
           buttonText: buttonText !== undefined ? buttonText : targetBanner.buttonText,
           buttonLink: buttonLink !== undefined ? buttonLink : targetBanner.buttonLink,
           animationSpeed: typeof animationSpeed === 'number' ? animationSpeed : targetBanner.animationSpeed,
@@ -131,6 +150,8 @@ export async function POST(req: NextRequest) {
           bgImagePublicId: bgImagePublicId || null,
           bikeImageUrl: bikeImageUrl || DEFAULT_BANNER.bikeImageUrl,
           bikeImagePublicId: bikeImagePublicId || null,
+          bikeReturnImageUrl: bikeReturnImageUrl || DEFAULT_BANNER.bikeReturnImageUrl,
+          bikeReturnImagePublicId: bikeReturnImagePublicId || null,
           buttonText: buttonText || DEFAULT_BANNER.buttonText,
           buttonLink: buttonLink || DEFAULT_BANNER.buttonLink,
           animationSpeed: typeof animationSpeed === 'number' ? animationSpeed : DEFAULT_BANNER.animationSpeed,

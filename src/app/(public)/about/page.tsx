@@ -2,9 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import { ShieldCheck, Award, Heart, Users, Microchip } from 'lucide-react';
 
 interface AboutData {
@@ -68,8 +65,6 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <Header />
-
       {/* Banner */}
       <div className="hero-gradient text-white py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center space-y-3">
@@ -167,10 +162,6 @@ export default function AboutPage() {
           </div>
         </div>
 
-      </main>
-
-      <Footer />
-      <WhatsAppBtn />
-    </div>
+      </main>    </div>
   );
 }

@@ -36,25 +36,27 @@ export default function BlogSection() {
   }, []);
 
   return (
-    <section className="py-16 bg-slate-50 border-t border-slate-200/70">
+    <section className="py-16 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
           <div>
             <span className="text-brand-700 text-xs font-bold uppercase tracking-wider block mb-1">
               HEALTH ARTICLES & BLOGS
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-sans tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-sans tracking-tight">
               Understand Your Health
             </h2>
             <p className="text-slate-600 text-sm mt-1">
               Stay informed with the latest diagnostic and healthcare insights.
             </p>
           </div>
+
+          {/* Desktop/tablet: link at top (hidden on mobile) */}
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 text-brand-700 hover:text-brand-800 font-bold text-sm mt-4 md:mt-0 group"
+            className="hidden md:inline-flex items-center gap-2 text-brand-700 hover:text-brand-800 font-bold text-sm mt-4 md:mt-0 group"
           >
             View All Articles
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -104,9 +106,20 @@ export default function BlogSection() {
                   Read Full Article →
                 </div>
               </div>
-
             </Link>
           ))}
+        </div>
+
+        {/* Mobile: button at bottom (hidden on md and up) */}
+        {/* Mobile: button at bottom (hidden on md and up) */}
+        <div className="md:hidden mt-8 flex justify-center">
+          <Link
+            href="/blog"
+            className="inline-flex items-center justify-center gap-2 bg-brand-700 hover:bg-brand-800 text-white text-sm px-6 py-3 rounded-full transition-colors group"
+          >
+            View All Articles
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+          </Link>
         </div>
 
       </div>

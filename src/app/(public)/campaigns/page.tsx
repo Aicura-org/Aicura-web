@@ -1,9 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import { CampaignService } from '@/services/campaign.service';
 import {
   Megaphone,
@@ -31,8 +28,6 @@ export default async function CampaignsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col justify-between">
-      <Header />
-
       <main className="flex-1 pb-16">
         {/* Hero Banner Section */}
         <section className="bg-brand-900 text-white relative overflow-hidden py-14 md:py-20">
@@ -261,10 +256,6 @@ export default async function CampaignsPage() {
             </div>
           )}
         </section>
-      </main>
-
-      <Footer />
-      <WhatsAppBtn />
-    </div>
+      </main>    </div>
   );
 }

@@ -13,6 +13,42 @@ interface TestimonialItem {
   avatarUrl?: string | null;
 }
 
+function TestimonialCard({ item }: { item: TestimonialItem }) {
+  return (
+    <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between relative group h-full">
+      <Quote className="w-8 h-8 text-emerald-200/60 absolute top-4 right-4 group-hover:text-emerald-300/80 transition-colors" />
+
+      <div className="space-y-4">
+        <div className="flex items-center gap-1 text-yellow-400">
+          {Array.from({ length: item.rating }).map((_, i) => (
+            <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+          ))}
+        </div>
+
+        <p className="text-slate-700 text-sm italic leading-relaxed">
+          "{item.comment}"
+        </p>
+      </div>
+
+      <div className="flex items-center gap-3 pt-6 border-t border-slate-200/70 mt-4">
+        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-brand-700 text-white flex items-center justify-center font-bold text-sm shrink-0">
+          {item.avatarUrl ? (
+            <Image src={item.avatarUrl} alt={item.patientName} fill className="object-cover" />
+          ) : (
+            item.patientName.charAt(0)
+          )}
+        </div>
+        <div>
+          <h3 className="text-sm font-bold text-slate-900 leading-tight">
+            {item.patientName}
+          </h3>
+          <span className="text-xs text-slate-500">{item.location}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function TestimonialsSection() {
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>([]);
 
@@ -35,23 +71,36 @@ export default function TestimonialsSection() {
 
   return (
     <section className="py-16 bg-white overflow-hidden">
+      {/* Marquee animation */}
+      <style>{`
+        @keyframes testimonial-marquee {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+        .testimonial-track {
+          animation: testimonial-marquee var(--marquee-duration, 30s) linear infinite;
+        }
+        .testimonial-track:active { animation-play-state: paused; }
+        @media (prefers-reduced-motion: reduce) {
+          .testimonial-track { animation: none; }
+        }
+      `}</style>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
           <div>
             <span className="text-brand-700 text-xs font-bold uppercase tracking-wider block mb-1">
               PATIENT REVIEWS
             </span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-sans tracking-tight">
+            <h2 className="font-sans text-2xl font-bold tracking-tight text-black sm:text-4xl">
               Trusted By Our Patients
             </h2>
-            <p className="text-slate-600 text-sm mt-1">
-              Real experiences. Real trust.
-            </p>
+            <p className="text-slate-600 text-sm mt-1">Real experiences. Real trust.</p>
           </div>
 
-          <div className="flex items-center gap-2 mt-4 md:mt-0">
+          {/* Hidden on mobile, visible from md up */}
+          <div className="hidden md:flex items-center gap-2 mt-4 md:mt-0">
             <button
               aria-label="Previous review"
               className="w-9 h-9 rounded-full border border-slate-200 hover:border-brand-700 hover:bg-brand-700 hover:text-white flex items-center justify-center text-slate-600 transition-colors"
@@ -67,51 +116,29 @@ export default function TestimonialsSection() {
           </div>
         </div>
 
-        {/* Testimonials Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Desktop: grid */}
+        <div className="hidden md:grid grid-cols-3 gap-6">
           {testimonials.map((item) => (
-            <div
-              key={item.id}
-              className="bg-slate-50 p-6 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-lg transition-all flex flex-col justify-between relative group"
-            >
-              <Quote className="w-8 h-8 text-emerald-200/60 absolute top-4 right-4 group-hover:text-emerald-300/80 transition-colors" />
-
-              <div className="space-y-4">
-                {/* Rating Stars */}
-                <div className="flex items-center gap-1 text-yellow-400">
-                  {Array.from({ length: item.rating }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-
-                {/* Comment */}
-                <p className="text-slate-700 text-sm italic leading-relaxed">
-                  "{item.comment}"
-                </p>
-              </div>
-
-              {/* Patient Info */}
-              <div className="flex items-center gap-3 pt-6 border-t border-slate-200/70 mt-4">
-                <div className="relative w-10 h-10 rounded-full overflow-hidden bg-brand-700 text-white flex items-center justify-center font-bold text-sm shrink-0">
-                  {item.avatarUrl ? (
-                    <Image src={item.avatarUrl} alt={item.patientName} fill className="object-cover" />
-                  ) : (
-                    item.patientName.charAt(0)
-                  )}
-                </div>
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 leading-tight">
-                    {item.patientName}
-                  </h3>
-                  <span className="text-xs text-slate-500">{item.location}</span>
-                </div>
-              </div>
-
-            </div>
+            <TestimonialCard key={item.id} item={item} />
           ))}
         </div>
-
       </div>
+
+      {/* Mobile: continuous auto-slide */}
+      {testimonials.length > 0 && (
+        <div className="md:hidden overflow-hidden">
+          <div
+            className="testimonial-track flex w-max"
+            style={{ ['--marquee-duration' as string]: `${testimonials.length * 7}s` }}
+          >
+            {[...testimonials, ...testimonials].map((item, index) => (
+              <div key={`${item.id}-${index}`} className="w-[85vw] max-w-[320px] mr-4 shrink-0">
+                <TestimonialCard item={item} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

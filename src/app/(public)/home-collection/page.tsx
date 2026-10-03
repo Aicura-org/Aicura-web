@@ -1,9 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import { CheckCircle2, Upload, Loader2 } from 'lucide-react';
 
 export default function HomeCollectionPage() {
@@ -81,8 +78,6 @@ export default function HomeCollectionPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <Header />
-
       {/* Banner */}
       <div className="hero-gradient text-white py-14 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center space-y-3">
@@ -261,10 +256,6 @@ export default function HomeCollectionPage() {
           </div>
 
         </div>
-      </main>
-
-      <Footer />
-      <WhatsAppBtn />
-    </div>
+      </main>    </div>
   );
 }

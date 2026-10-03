@@ -12,6 +12,7 @@ import {
   Sparkles,
   Bike,
   Building,
+  Building2,
   LogOut,
   ExternalLink,
   Menu,
@@ -74,6 +75,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navs = [
     { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+    { label: 'Company Details', href: '/admin/company-details', icon: Building2 },
     { label: 'Hero Banner CMS', href: '/admin/hero', icon: Sparkles },
     { label: 'About Us CMS', href: '/admin/about', icon: Building },
     { label: 'Home Collection CMS', href: '/admin/home-collection', icon: Bike },
@@ -81,6 +83,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Campaigns CMS', href: '/admin/campaigns', icon: Megaphone },
     { label: 'Patient Enquiries', href: '/admin/enquiries', icon: CalendarCheck },
   ];
+
 
 
   if (authenticating) {
@@ -95,7 +98,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen flex bg-slate-100 font-sans relative">
+    <div className="h-screen flex bg-slate-100 font-sans overflow-hidden">
       
       {/* Mobile Drawer Backdrop */}
       {sidebarOpen && (
@@ -107,7 +110,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Sidebar Desktop & Mobile Drawer */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 flex flex-col w-64 bg-brand-800 text-white border-r border-brand-700 p-5 justify-between shrink-0 transition-transform duration-200 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-brand-800 text-white border-r border-brand-700 p-5 justify-between shrink-0 transition-transform duration-200 ease-in-out ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
@@ -187,7 +190,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto lg:ml-64 h-full">
         
         {/* Top Navbar */}
         <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-30">

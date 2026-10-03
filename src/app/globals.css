@@ -8,6 +8,10 @@
     --foreground: 160 30% 10%;
   }
   
+  html {
+    overflow-x: hidden;
+  }
+
   body {
     background-color: #f8faf9;
     color: #1e293b;

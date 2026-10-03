@@ -228,3 +228,45 @@ export interface AboutSectionItem {
   updatedAt: string | Date;
 }
 
+export interface CompanyDetailsItem {
+  id: string;
+  companyName: string;
+  branchName?: string | null;
+  address: string;
+  city?: string | null;
+  state?: string | null;
+  pincode?: string | null;
+  mobileNumber: string;
+  alternatePhone?: string | null;
+  whatsappNumber: string;
+  email?: string | null;
+  mapLink: string;
+  workingHours?: string | null;
+  websiteUrl?: string | null;
+  taxNumber?: string | null;
+  isPrimary: boolean;
+  isActive: boolean;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface CreateCompanyDetailsInput {
+  companyName: string;
+  branchName?: string;
+  address: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
+  mobileNumber: string;
+  alternatePhone?: string;
+  whatsappNumber: string;
+  email?: string;
+  mapLink: string;
+  workingHours?: string;
+  websiteUrl?: string;
+  taxNumber?: string;
+  isPrimary?: boolean;
+  isActive?: boolean;
+}
+
+export interface UpdateCompanyDetailsInput extends Partial<CreateCompanyDetailsInput> {}

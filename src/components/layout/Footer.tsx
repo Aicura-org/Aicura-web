@@ -1,10 +1,28 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ShieldCheck, Phone, Mail, MapPin, Clock, Facebook, Instagram, Linkedin, Youtube, Send } from 'lucide-react';
+import { CompanyDetailsItem } from '@/types';
 
 export default function Footer() {
+  const [company, setCompany] = useState<CompanyDetailsItem | null>(null);
+
+  useEffect(() => {
+    fetch('/api/company-details?primary=true')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.success && json.data) {
+          setCompany(json.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const formattedAddress = company
+    ? [company.address, company.city, company.state, company.pincode].filter(Boolean).join(', ')
+    : '123, Health Avenue, Kochi, Kerala - 682001';
+
   return (
     <footer className="bg-brand-800 text-slate-300 pt-16 pb-8 border-t border-brand-700/60 relative overflow-hidden">
       {/* Decorative accent shape */}
@@ -78,19 +96,42 @@ export default function Footer() {
             <ul className="space-y-2.5 text-xs text-slate-300">
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />
-                <a href="tel:+919946284615" className="hover:text-yellow-400 font-semibold">+91 99462 84615</a>
+                <a
+                  href={`tel:${company?.mobileNumber || '+919946284615'}`}
+                  className="hover:text-yellow-400 font-semibold"
+                >
+                  {company?.mobileNumber || '+91 99462 84615'}
+                </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />
-                <a href="mailto:info@aicuradiagnostics.in" className="hover:text-yellow-400">info@aicuradiagnostics.in</a>
+                <a
+                  href={`mailto:${company?.email || 'info@aicuradiagnostics.in'}`}
+                  className="hover:text-yellow-400"
+                >
+                  {company?.email || 'info@aicuradiagnostics.in'}
+                </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />
-                <span>123, Health Avenue, Kochi, Kerala - 682001</span>
+                {company?.mapLink ? (
+                  <a
+                    href={company.mapLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-yellow-400"
+                  >
+                    {formattedAddress}
+                  </a>
+                ) : (
+                  <span>{formattedAddress}</span>
+                )}
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 text-yellow-400 shrink-0 mt-0.5" />
-                <span>Mon - Sat: 7:00 AM - 8:00 PM<br />Sunday: 7:00 AM - 2:00 PM</span>
+                <span className="whitespace-pre-line">
+                  {company?.workingHours || 'Mon - Sat: 7:00 AM - 8:00 PM\nSunday: 7:00 AM - 2:00 PM'}
+                </span>
               </li>
             </ul>
 

@@ -1,10 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle2, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle2, Loader2, MessageSquare, ExternalLink } from 'lucide-react';
+import { CompanyDetailsItem } from '@/types';
 
 export default function ContactPage() {
   const [name, setName] = useState('');
@@ -13,6 +11,18 @@ export default function ContactPage() {
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
+  const [company, setCompany] = useState<CompanyDetailsItem | null>(null);
+
+  useEffect(() => {
+    fetch('/api/company-details?primary=true')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.success && json.data) {
+          setCompany(json.data);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,8 +54,6 @@ export default function ContactPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
-      <Header />
-
       {/* Banner */}
       <div className="hero-gradient text-white py-14 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center space-y-3">
@@ -78,8 +86,28 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 block">Phone Helpline</span>
-                    <a href="tel:+919946284615" className="text-brand-700 hover:underline font-semibold">
-                      +91 99462 84615
+                    <a
+                      href={`tel:${company?.mobileNumber || '+919946284615'}`}
+                      className="text-brand-700 hover:underline font-semibold"
+                    >
+                      {company?.mobileNumber || '+91 99462 84615'}
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <MessageSquare className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <span className="font-bold text-slate-900 block">WhatsApp Support</span>
+                    <a
+                      href={`https://wa.me/${(company?.whatsappNumber || '919946284615').replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-emerald-700 hover:underline font-semibold"
+                    >
+                      {company?.whatsappNumber || '+91 99462 84615'}
                     </a>
                   </div>
                 </div>
@@ -90,8 +118,11 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 block">Email Support</span>
-                    <a href="mailto:info@aicuradiagnostics.com" className="text-brand-700 hover:underline">
-                      info@aicuradiagnostics.com
+                    <a
+                      href={`mailto:${company?.email || 'info@aicuradiagnostics.com'}`}
+                      className="text-brand-700 hover:underline"
+                    >
+                      {company?.email || 'info@aicuradiagnostics.com'}
                     </a>
                   </div>
                 </div>
@@ -101,8 +132,25 @@ export default function ContactPage() {
                     <MapPin className="w-4 h-4" />
                   </div>
                   <div>
-                    <span className="font-bold text-slate-900 block">Main Diagnostic Lab</span>
-                    <p className="text-slate-600">Jubilee Hills Checkpost Road, Hyderabad, Telangana - 500033</p>
+                    <span className="font-bold text-slate-900 block">
+                      {company?.branchName ? `${company.companyName} (${company.branchName})` : company?.companyName || 'Main Diagnostic Lab'}
+                    </span>
+                    <p className="text-slate-600">
+                      {company
+                        ? [company.address, company.city, company.state, company.pincode].filter(Boolean).join(', ')
+                        : 'Jubilee Hills Checkpost Road, Hyderabad, Telangana - 500033'}
+                    </p>
+                    {company?.mapLink && (
+                      <a
+                        href={company.mapLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-[11px] text-brand-700 font-semibold hover:underline mt-1"
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                        <span>View on Google Maps</span>
+                      </a>
+                    )}
                   </div>
                 </div>
 
@@ -112,8 +160,9 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 block">Working Hours</span>
-                    <p className="text-slate-600">Monday - Saturday: 7:00 AM - 8:00 PM</p>
-                    <p className="text-slate-600">Sunday: 7:00 AM - 2:00 PM</p>
+                    <p className="text-slate-600 whitespace-pre-line">
+                      {company?.workingHours || 'Monday - Saturday: 7:00 AM - 8:00 PM\nSunday: 7:00 AM - 2:00 PM'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -205,10 +254,6 @@ export default function ContactPage() {
           </div>
 
         </div>
-      </main>
-
-      <Footer />
-      <WhatsAppBtn />
-    </div>
+      </main>    </div>
   );
 }

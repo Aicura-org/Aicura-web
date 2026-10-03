@@ -2,9 +2,6 @@ import React from 'react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import { CampaignService } from '@/services/campaign.service';
 import CampaignEnquiryForm from '@/components/campaign/CampaignEnquiryForm';
 import { ShieldCheck, CheckCircle2, Clock, MapPin, Megaphone } from 'lucide-react';
@@ -36,10 +33,8 @@ export default async function CampaignPublicPage({ params }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 flex flex-col justify-between">
-      <Header />
-
-      <main className="flex-1 pb-16 space-y-12">
+    <div className="bg-slate-50 font-sans text-slate-800">
+      <main className="pb-16 space-y-12">
         {/* Campaign Hero Banner */}
         <section className="bg-brand-900 text-white relative overflow-hidden py-12 md:py-20">
           <div className="absolute top-0 right-0 w-96 h-96 bg-brand-700/40 rounded-full blur-3xl pointer-events-none" />
@@ -114,9 +109,6 @@ export default async function CampaignPublicPage({ params }: Props) {
         )}
 
       </main>
-
-      <Footer />
-      <WhatsAppBtn />
     </div>
   );
 }

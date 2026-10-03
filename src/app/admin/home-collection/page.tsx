@@ -32,6 +32,8 @@ interface HomeCollectionData {
   bgImagePublicId: string | null;
   bikeImageUrl: string;
   bikeImagePublicId: string | null;
+  bikeReturnImageUrl?: string;
+  bikeReturnImagePublicId?: string | null;
   buttonText: string;
   buttonLink: string;
   animationSpeed: number;
@@ -42,12 +44,14 @@ interface HomeCollectionData {
 const defaultData: HomeCollectionData = {
   badgeText: 'HOME COLLECTION',
   titlePrefix: 'Healthcare that',
-  titleHighlight: 'comes home.',
+  titleHighlight: 'comes home',
   subtitle: 'Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.',
   bgImageUrl: '',
   bgImagePublicId: null,
   bikeImageUrl: '',
   bikeImagePublicId: null,
+  bikeReturnImageUrl: '',
+  bikeReturnImagePublicId: null,
   buttonText: 'Book Home Collection',
   buttonLink: '/home-collection',
   animationSpeed: 14,
@@ -67,11 +71,18 @@ export default function AdminHomeCollectionPage() {
   const [bgUploading, setBgUploading] = useState(false);
   const [previewBgError, setPreviewBgError] = useState(false);
 
-  // Bike upload states
+  // Bike upload states (Forward / Facing Right)
   const [bikeMode, setBikeMode] = useState<'upload' | 'url'>('upload');
   const [bikePastedUrl, setBikePastedUrl] = useState('');
   const [bikeUploading, setBikeUploading] = useState(false);
   const [previewBikeError, setPreviewBikeError] = useState(false);
+
+  // Return Bike upload states (Return / Facing Left)
+  const [returnBikeMode, setReturnBikeMode] = useState<'upload' | 'url'>('upload');
+  const [returnBikePastedUrl, setReturnBikePastedUrl] = useState('');
+  const [returnBikeUploading, setReturnBikeUploading] = useState(false);
+  const [previewReturnBikeError, setPreviewReturnBikeError] = useState(false);
+  const [previewDirection, setPreviewDirection] = useState<'forward' | 'return'>('forward');
 
   // Preview animation toggle
   const [previewPlaying, setPreviewPlaying] = useState(true);
@@ -81,6 +92,7 @@ export default function AdminHomeCollectionPage() {
 
   const bgFileInputRef = useRef<HTMLInputElement>(null);
   const bikeFileInputRef = useRef<HTMLInputElement>(null);
+  const returnBikeFileInputRef = useRef<HTMLInputElement>(null);
 
   // Detect unsaved changes compared to baseline saved state
   const isDirty = useMemo(() => {
@@ -125,6 +137,10 @@ export default function AdminHomeCollectionPage() {
           json.data.bikeImageUrl && !json.data.bikeImageUrl.startsWith('/images/home-collection')
             ? json.data.bikeImageUrl
             : '';
+        const cleanReturnBike =
+          json.data.bikeReturnImageUrl && !json.data.bikeReturnImageUrl.startsWith('/images/home-collection')
+            ? json.data.bikeReturnImageUrl
+            : '';
 
         const loadedData: HomeCollectionData = {
           id: json.data.id,
@@ -136,6 +152,8 @@ export default function AdminHomeCollectionPage() {
           bgImagePublicId: json.data.bgImagePublicId ?? null,
           bikeImageUrl: cleanBike,
           bikeImagePublicId: json.data.bikeImagePublicId ?? null,
+          bikeReturnImageUrl: cleanReturnBike,
+          bikeReturnImagePublicId: json.data.bikeReturnImagePublicId ?? null,
           buttonText: json.data.buttonText ?? defaultData.buttonText,
           buttonLink: json.data.buttonLink ?? defaultData.buttonLink,
           animationSpeed: json.data.animationSpeed ?? defaultData.animationSpeed,
@@ -147,8 +165,10 @@ export default function AdminHomeCollectionPage() {
         setSavedData(loadedData);
         setBgPastedUrl(cleanBg);
         setBikePastedUrl(cleanBike);
+        setReturnBikePastedUrl(cleanReturnBike);
         setPreviewBgError(false);
         setPreviewBikeError(false);
+        setPreviewReturnBikeError(false);
       }
     } catch (err: any) {
       showNotice('error', err.message || 'Failed to load Home Collection banner settings');
@@ -161,8 +181,10 @@ export default function AdminHomeCollectionPage() {
     setFormData({ ...savedData });
     setBgPastedUrl(savedData.bgImageUrl || '');
     setBikePastedUrl(savedData.bikeImageUrl || '');
+    setReturnBikePastedUrl(savedData.bikeReturnImageUrl || '');
     setPreviewBgError(false);
     setPreviewBikeError(false);
+    setPreviewReturnBikeError(false);
     showNotice('success', 'Unsaved changes discarded.');
   };
 
@@ -288,6 +310,70 @@ export default function AdminHomeCollectionPage() {
       bikeImagePublicId: null,
     }));
     setBikePastedUrl('');
+  };
+
+  const handleReturnBikeFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showNotice('error', 'Please select a valid image file (PNG, WebP)');
+      return;
+    }
+
+    try {
+      setReturnBikeUploading(true);
+      const data = new FormData();
+      data.append('file', file);
+      data.append('category', 'icon');
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: data,
+      });
+
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.message || 'Return bike image upload failed');
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        bikeReturnImageUrl: json.data.url,
+        bikeReturnImagePublicId: json.data.public_id || null,
+      }));
+      setReturnBikePastedUrl(json.data.url);
+      setPreviewReturnBikeError(false);
+      showNotice('success', 'Return bike rider image uploaded successfully!');
+    } catch (err: any) {
+      showNotice('error', err.message || 'Error uploading return bike image');
+    } finally {
+      setReturnBikeUploading(false);
+      if (returnBikeFileInputRef.current) returnBikeFileInputRef.current.value = '';
+    }
+  };
+
+  const handleApplyReturnBikeUrl = () => {
+    if (!returnBikePastedUrl.trim()) {
+      showNotice('error', 'Please enter a valid image URL');
+      return;
+    }
+    setFormData((prev) => ({
+      ...prev,
+      bikeReturnImageUrl: returnBikePastedUrl.trim(),
+      bikeReturnImagePublicId: null,
+    }));
+    setPreviewReturnBikeError(false);
+    showNotice('success', 'Return bike image URL applied!');
+  };
+
+  const handleClearReturnBikeImage = () => {
+    setFormData((prev) => ({
+      ...prev,
+      bikeReturnImageUrl: '',
+      bikeReturnImagePublicId: null,
+    }));
+    setReturnBikePastedUrl('');
   };
 
   const handleSave = async () => {
@@ -450,14 +536,41 @@ export default function AdminHomeCollectionPage() {
               </span>
             </div>
             
-            <button
-              type="button"
-              onClick={() => setPreviewPlaying(!previewPlaying)}
-              className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 transition"
-            >
-              {previewPlaying ? <Pause className="w-3.5 h-3.5 text-amber-600" /> : <Play className="w-3.5 h-3.5 text-emerald-600" />}
-              <span>{previewPlaying ? 'Pause Motion' : 'Play Motion'}</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-lg border border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setPreviewDirection('forward')}
+                  className={`px-2.5 py-1 text-xs font-bold rounded-md transition ${
+                    previewDirection === 'forward'
+                      ? 'bg-brand-700 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  Forward →
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPreviewDirection('return')}
+                  className={`px-2.5 py-1 text-xs font-bold rounded-md transition ${
+                    previewDirection === 'return'
+                      ? 'bg-brand-700 text-white shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  ← Return
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setPreviewPlaying(!previewPlaying)}
+                className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 transition"
+              >
+                {previewPlaying ? <Pause className="w-3.5 h-3.5 text-amber-600" /> : <Play className="w-3.5 h-3.5 text-emerald-600" />}
+                <span>{previewPlaying ? 'Pause Motion' : 'Play Motion'}</span>
+              </button>
+            </div>
           </div>
 
           {/* Banner Preview Area */}
@@ -521,10 +634,15 @@ export default function AdminHomeCollectionPage() {
 
             {/* Bike Animation Preview */}
             <div className="relative z-30 w-full h-28 sm:h-32 pointer-events-none">
-              {formData.bikeImageUrl && !previewBikeError ? (
+              {((previewDirection === 'return' ? (formData.bikeReturnImageUrl || formData.bikeImageUrl) : formData.bikeImageUrl) &&
+                !(previewDirection === 'return' ? (formData.bikeReturnImageUrl ? previewReturnBikeError : previewBikeError) : previewBikeError)) ? (
                 <div
                   className={`absolute bottom-2 z-30 w-36 sm:w-48 h-28 sm:h-32 ${
-                    formData.animationEnabled && previewPlaying ? 'preview-bike-drive' : 'left-1/3'
+                    formData.animationEnabled && previewPlaying
+                      ? previewDirection === 'return'
+                        ? 'preview-bike-drive-reverse'
+                        : 'preview-bike-drive'
+                      : 'left-1/3'
                   }`}
                   style={{
                     animationDuration: `${formData.animationSpeed}s`,
@@ -532,18 +650,29 @@ export default function AdminHomeCollectionPage() {
                 >
                   <div className="relative w-full h-full animate-bounce-subtle">
                     <Image
-                      src={formData.bikeImageUrl}
+                      src={
+                        previewDirection === 'return' && formData.bikeReturnImageUrl && !previewReturnBikeError
+                          ? formData.bikeReturnImageUrl
+                          : formData.bikeImageUrl
+                      }
                       alt="Bike Preview"
                       fill
                       className="object-contain"
-                      onError={() => setPreviewBikeError(true)}
+                      onError={() => {
+                        if (previewDirection === 'return') setPreviewReturnBikeError(true);
+                        else setPreviewBikeError(true);
+                      }}
                     />
                   </div>
                 </div>
               ) : (
                 <div
                   className={`absolute bottom-2 w-32 sm:w-40 ${
-                    formData.animationEnabled && previewPlaying ? 'preview-bike-drive' : 'left-1/3'
+                    formData.animationEnabled && previewPlaying
+                      ? previewDirection === 'return'
+                        ? 'preview-bike-drive-reverse'
+                        : 'preview-bike-drive'
+                      : 'left-1/3'
                   }`}
                   style={{
                     animationDuration: `${formData.animationSpeed}s`,
@@ -682,7 +811,7 @@ export default function AdminHomeCollectionPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Layers className="w-5 h-5 text-brand-700" />
-                <h3 className="text-base font-bold text-slate-900">2. Animated Bike / Rider Image</h3>
+                <h3 className="text-base font-bold text-slate-900">2. Forward Bike Image (Facing Right)</h3>
               </div>
               {formData.bikeImageUrl && (
                 <button
@@ -696,7 +825,7 @@ export default function AdminHomeCollectionPage() {
               )}
             </div>
             <p className="text-xs text-slate-500">
-              Upload a transparent PNG/WebP cutout of the courier rider facing right. This image will travel smoothly across the road.
+              Upload a transparent PNG/WebP cutout of the courier rider facing right. This image travels forward across the road when scrolling down.
             </p>
 
             {/* Mode Switcher Tabs */}
@@ -791,11 +920,125 @@ export default function AdminHomeCollectionPage() {
             )}
           </div>
 
-          {/* Card 3: Text Content Editors */}
+          {/* Card 3: Return-Time Bike Image (On Scroll Up / Facing Left) */}
+          <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Layers className="w-5 h-5 text-brand-700" />
+                <h3 className="text-base font-bold text-slate-900">3. Return Bike Image (Facing Left / On Scroll Up)</h3>
+              </div>
+              {formData.bikeReturnImageUrl && (
+                <button
+                  type="button"
+                  onClick={handleClearReturnBikeImage}
+                  className="text-xs text-rose-600 hover:text-rose-700 flex items-center gap-1 font-semibold"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Remove Image</span>
+                </button>
+              )}
+            </div>
+            <p className="text-xs text-slate-500">
+              Upload a transparent PNG/WebP cutout of the courier rider facing left. This image will display when returning (scrolling up) so the logo and text remain perfectly readable without mirroring.
+            </p>
+
+            {/* Mode Switcher Tabs */}
+            <div className="flex gap-2 p-1 bg-slate-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() => setReturnBikeMode('upload')}
+                className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition ${
+                  returnBikeMode === 'upload' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Upload className="w-3.5 h-3.5" />
+                <span>Upload File</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setReturnBikeMode('url')}
+                className={`flex-1 py-1.5 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5 transition ${
+                  returnBikeMode === 'url' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <LinkIcon className="w-3.5 h-3.5" />
+                <span>Paste Image URL</span>
+              </button>
+            </div>
+
+            {returnBikeMode === 'upload' ? (
+              <div className="space-y-3">
+                <input
+                  type="file"
+                  ref={returnBikeFileInputRef}
+                  onChange={handleReturnBikeFileUpload}
+                  accept="image/png,image/webp"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => returnBikeFileInputRef.current?.click()}
+                  disabled={returnBikeUploading}
+                  className="w-full border-2 border-dashed border-slate-300 hover:border-brand-700 rounded-xl p-6 text-center bg-slate-50 hover:bg-slate-100/80 transition group"
+                >
+                  {returnBikeUploading ? (
+                    <div className="flex flex-col items-center gap-2 text-brand-700">
+                      <Loader2 className="w-6 h-6 animate-spin" />
+                      <span className="text-xs font-bold">Uploading return bike image...</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      <Upload className="w-6 h-6 text-slate-400 group-hover:text-brand-700" />
+                      <span className="text-xs font-bold text-slate-700 group-hover:text-brand-700">
+                        Click to select left-facing return bike image
+                      </span>
+                      <span className="text-[11px] text-slate-400">Transparent PNG/WebP facing left</span>
+                    </div>
+                  )}
+                </button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://example.com/rider-return-cutout.png"
+                    value={returnBikePastedUrl}
+                    onChange={(e) => setReturnBikePastedUrl(e.target.value)}
+                    className="flex-1 px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-700"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleApplyReturnBikeUrl}
+                    className="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl"
+                  >
+                    Apply URL
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {formData.bikeReturnImageUrl && !previewReturnBikeError && (
+              <div className="relative h-28 w-full rounded-xl overflow-hidden border border-slate-200 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:12px_12px]">
+                <Image
+                  src={formData.bikeReturnImageUrl}
+                  alt="Current Return Bike"
+                  fill
+                  className="object-contain p-2"
+                  onError={() => setPreviewReturnBikeError(true)}
+                />
+                <div className="absolute bottom-1 right-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded font-mono truncate max-w-[200px]">
+                  {formData.bikeReturnImageUrl}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Card 4: Text Content Editors */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <div className="flex items-center gap-2">
               <Type className="w-5 h-5 text-brand-700" />
-              <h3 className="text-base font-bold text-slate-900">3. Texts & Headings</h3>
+              <h3 className="text-base font-bold text-slate-900">4. Texts & Headings</h3>
             </div>
 
             <div className="space-y-3">
@@ -833,7 +1076,7 @@ export default function AdminHomeCollectionPage() {
                     type="text"
                     value={formData.titleHighlight}
                     onChange={(e) => setFormData({ ...formData, titleHighlight: e.target.value })}
-                    placeholder="comes home."
+                    placeholder="comes home"
                     className="w-full px-3.5 py-2 text-xs border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-700 text-brand-700 font-bold"
                   />
                 </div>
@@ -881,11 +1124,11 @@ export default function AdminHomeCollectionPage() {
             </div>
           </div>
 
-          {/* Card 4: Animation & Display Settings */}
+          {/* Card 5: Animation & Display Settings */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
             <div className="flex items-center gap-2">
               <Sliders className="w-5 h-5 text-brand-700" />
-              <h3 className="text-base font-bold text-slate-900">4. Animation & Visibility</h3>
+              <h3 className="text-base font-bold text-slate-900">5. Animation & Visibility</h3>
             </div>
 
             <div className="space-y-4">
@@ -976,6 +1219,19 @@ export default function AdminHomeCollectionPage() {
         }
         .preview-bike-drive {
           animation-name: previewBikeDrive;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+        @keyframes previewBikeDriveReverse {
+          0% {
+            left: 110%;
+          }
+          100% {
+            left: -20%;
+          }
+        }
+        .preview-bike-drive-reverse {
+          animation-name: previewBikeDriveReverse;
           animation-timing-function: linear;
           animation-iteration-count: infinite;
         }

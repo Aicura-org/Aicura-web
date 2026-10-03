@@ -571,7 +571,7 @@ async function main() {
       data: {
         badgeText: 'HOME COLLECTION',
         titlePrefix: 'Healthcare that',
-        titleHighlight: 'comes home.',
+        titleHighlight: 'comes home',
         subtitle: 'Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.',
         buttonText: 'Book Home Collection',
         buttonLink: '/home-collection',

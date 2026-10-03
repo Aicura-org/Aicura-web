@@ -101,7 +101,7 @@ export default function EnquireModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/75 backdrop-blur-sm p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-100 relative animate-in fade-in zoom-in duration-200">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden relative animate-in fade-in zoom-in duration-200">
         
         {/* Header banner */}
         <div className="bg-brand-700 text-white p-6 relative">
@@ -156,7 +156,7 @@ export default function EnquireModal({
                   <input
                     type="text"
                     required
-                    placeholder="e.g. Rahul Sharma"
+                    placeholder="Enter Name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700"
@@ -187,7 +187,7 @@ export default function EnquireModal({
                     <Mail className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                     <input
                       type="email"
-                      placeholder="rahul@example.com"
+                      placeholder="Enter gmail"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700"
@@ -201,7 +201,7 @@ export default function EnquireModal({
                 <label className="block text-xs font-semibold text-slate-700 mb-1">Test or Package Required</label>
                 <input
                   type="text"
-                  placeholder="e.g. Full Body Checkup, CBC, Vitamin D"
+                  placeholder="Enter required tests"
                   value={selectedItem}
                   onChange={(e) => setSelectedItem(e.target.value)}
                   className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700"
@@ -219,7 +219,7 @@ export default function EnquireModal({
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="e.g. Doctor advised Fasting Sugar, CBC, Lipid Profile (or any symptoms)"
+                  placeholder="Notes & Symptoms"
                   value={prescriptionNotes}
                   onChange={(e) => setPrescriptionNotes(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700 placeholder:text-slate-400"
@@ -233,7 +233,7 @@ export default function EnquireModal({
                   <MapPin className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
                   <input
                     type="text"
-                    placeholder="House/Flat No., Street, City"
+                    placeholder="House/Flat No, Street, City"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
                     className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-700"

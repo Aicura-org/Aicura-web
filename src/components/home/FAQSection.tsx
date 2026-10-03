@@ -36,13 +36,13 @@ export default function FAQSection() {
   return (
     <section className="py-16 bg-white font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
-        <div className="text-center max-w-2xl mx-auto mb-12">
+        <div className="text-left md:text-center max-w-2xl mx-auto mb-6">
           <span className="text-xs font-bold text-brand-700 uppercase tracking-wider block mb-1">
             HELP & FREQUENTLY ASKED QUESTIONS
           </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-sans tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-sans tracking-tight">
             Questions, Answered.
           </h2>
           <p className="text-slate-600 text-sm mt-1">
@@ -50,8 +50,8 @@ export default function FAQSection() {
           </p>
         </div>
 
-        {/* 2 Column Accordion Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 max-w-5xl mx-auto">
+        {/* Accordion List (single column) */}
+        <div className="flex flex-col gap-3 max-w-3xl mx-auto">
           {faqs.map((faq) => {
             const isOpen = openId === faq.id;
             return (
@@ -68,9 +68,8 @@ export default function FAQSection() {
                     {faq.question}
                   </span>
                   <ChevronDown
-                    className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
-                      isOpen ? 'rotate-180 text-brand-700' : ''
-                    }`}
+                    className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 text-brand-700' : ''
+                      }`}
                   />
                 </button>
 

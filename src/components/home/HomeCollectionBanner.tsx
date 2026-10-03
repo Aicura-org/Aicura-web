@@ -14,6 +14,7 @@ export interface HomeCollectionBannerProps {
     subtitle?: string | null;
     bgImageUrl?: string | null;
     bikeImageUrl?: string | null;
+    bikeReturnImageUrl?: string | null;
     buttonText?: string | null;
     buttonLink?: string | null;
     animationSpeed?: number;
@@ -27,6 +28,7 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
   const [modalOpen, setModalOpen] = useState(false);
   const [bgError, setBgError] = useState(false);
   const [bikeError, setBikeError] = useState(false);
+  const [returnBikeError, setReturnBikeError] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const bikeRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
@@ -38,6 +40,7 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
     setData(initialData);
     setBgError(false);
     setBikeError(false);
+    setReturnBikeError(false);
   }, [initialData]);
 
   useEffect(() => {
@@ -60,12 +63,13 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
 
   const badge = data?.badgeText || 'HOME COLLECTION';
   const prefix = data?.titlePrefix || 'Healthcare that';
-  const highlight = data?.titleHighlight || 'comes home.';
+  const highlight = data?.titleHighlight || 'comes home';
   const subtitle =
     data?.subtitle ||
     'Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.';
   const bgImage = data?.bgImageUrl || '';
   const bikeImage = data?.bikeImageUrl || '';
+  const bikeReturnImage = data?.bikeReturnImageUrl || '';
   const buttonText = data?.buttonText || 'Book Home Collection';
   const buttonLink = data?.buttonLink || '/home-collection';
   const animationEnabled = data?.animationEnabled !== false;
@@ -166,8 +170,8 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
         <div className="relative z-10 pt-8 sm:pt-10 lg:pt-12 pb-4 sm:pb-6 px-4 sm:px-6 lg:px-8 text-center max-w-3xl mx-auto flex flex-col items-center">
           {/* Badge */}
           {badge && (
-            <div className="inline-flex items-center gap-1.5 bg-white/95 backdrop-blur-md px-3.5 sm:px-4 py-1 rounded-full shadow-sm border border-slate-200 mb-2.5 transition-transform hover:scale-105">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
+            <div className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-1 mb-1 transition-transform hover:scale-105">
+
               <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-widest text-slate-800">
                 {badge}
               </span>
@@ -175,10 +179,10 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
           )}
 
           {/* Main Heading */}
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight drop-shadow-sm font-sans space-y-0.5">
-            {prefix && <span className="block">{prefix}</span>}
+          <h2 className="text-3xl sm:text-4xl text-black  font-sans space-y-0.5">
+         
             {highlight && (
-              <span className="block text-brand-700 font-black">
+              <span className="block text-black font-bold">
                 {highlight}
               </span>
             )}
@@ -186,7 +190,7 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
 
           {/* Subtitle */}
           {subtitle && (
-            <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm lg:text-base text-slate-700 font-medium max-w-xl leading-relaxed drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]">
+            <p className="mt-2.5 sm:mt-3 text-xs sm:text-sm text-black font-medium max-w-xl leading-relaxed drop-shadow-[0_1px_2px_rgba(255,255,255,0.85)]">
               {subtitle}
             </p>
           )}
@@ -197,16 +201,16 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
               {isModalTrigger ? (
                 <button
                   onClick={() => setModalOpen(true)}
-                  className="px-6 sm:px-8 py-2.5 sm:py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-extrabold text-xs sm:text-sm rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95"
+                  className="px-6 sm:px-8 py-2.5 sm:py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs sm:text-sm rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95"
                 >
                   {buttonText} →
                 </button>
               ) : (
                 <Link
                   href={buttonLink}
-                  className="inline-block px-6 sm:px-8 py-2.5 sm:py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-extrabold text-xs sm:text-sm rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95"
+                  className="inline-block px-6 sm:px-8 py-2.5 sm:py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs sm:text-sm rounded-full shadow-lg transition-all transform hover:scale-105 active:scale-95"
                 >
-                  {buttonText} →
+                  {buttonText}
                 </Link>
               )}
             </div>
@@ -215,25 +219,40 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
 
         {/* Full-width Road & Animated Travelling Bike (High z-index to avoid clipping) */}
         <div className="relative z-30 w-full h-32 sm:h-44 lg:h-52 pointer-events-none">
-          {bikeImage && !bikeError ? (
+          {(bikeImage && !bikeError) || (bikeReturnImage && !returnBikeError) ? (
             /* Custom Uploaded Transparent Bike Cutout */
             <div
               ref={bikeRef}
-              className="absolute bottom-2 sm:bottom-4 lg:bottom-6 z-30 w-44 sm:w-64 lg:w-80 h-32 sm:h-44 lg:h-52 transition-transform duration-300 ease-out will-change-transform"
+              className="absolute bottom-2 sm:bottom-4 lg:bottom-6 z-30 w-44 sm:w-64 lg:w-80 h-32 sm:h-44 lg:h-52 will-change-transform"
               style={{
                 left: animationEnabled ? '-12%' : '25%',
-                transform: isReverse ? 'scaleX(-1)' : 'scaleX(1)',
               }}
             >
               <div className={`relative w-full h-full ${isScrolling ? 'animate-bounce-subtle' : ''}`}>
-                <Image
-                  src={bikeImage}
-                  alt="Sample Collection Executive"
-                  fill
-                  className="object-contain object-bottom"
-                  sizes="(max-width: 640px) 200px, (max-width: 1024px) 280px, 340px"
-                  onError={() => setBikeError(true)}
-                />
+                {bikeImage && !bikeError && (
+                  <Image
+                    src={bikeImage}
+                    alt="Sample Collection Executive"
+                    fill
+                    className={`object-contain object-bottom transition-opacity duration-200 ${
+                      isReverse && bikeReturnImage && !returnBikeError ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    }`}
+                    sizes="(max-width: 640px) 200px, (max-width: 1024px) 280px, 340px"
+                    onError={() => setBikeError(true)}
+                  />
+                )}
+                {bikeReturnImage && !returnBikeError && (
+                  <Image
+                    src={bikeReturnImage}
+                    alt="Sample Collection Executive Returning"
+                    fill
+                    className={`object-contain object-bottom transition-opacity duration-200 ${
+                      isReverse ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                    }`}
+                    sizes="(max-width: 640px) 200px, (max-width: 1024px) 280px, 340px"
+                    onError={() => setReturnBikeError(true)}
+                  />
+                )}
               </div>
             </div>
           ) : (
@@ -255,8 +274,16 @@ export default function HomeCollectionBanner({ initialData }: HomeCollectionBann
                 >
                   <rect x="25" y="32" width="38" height="34" rx="5" fill="#005A5B" />
                   <rect x="29" y="36" width="30" height="26" rx="3" fill="#00796B" />
-                  <text x="33" y="52" fill="#FACC15" fontSize="7" fontWeight="bold">AiCura</text>
-                  <text x="33" y="59" fill="#FFFFFF" fontSize="5">Lab Care</text>
+                  <g
+                    transform={isReverse ? 'translate(88, 0) scale(-1, 1)' : 'translate(0, 0) scale(1, 1)'}
+                    style={{
+                      transition: 'transform 300ms ease-out',
+                      transformOrigin: '44px 50px',
+                    }}
+                  >
+                    <text x="44" y="52" textAnchor="middle" fill="#FACC15" fontSize="7" fontWeight="bold">AiCura</text>
+                    <text x="44" y="59" textAnchor="middle" fill="#FFFFFF" fontSize="5">Lab Care</text>
+                  </g>
 
                   <circle cx="92" cy="22" r="11" fill="#0F172A" />
                   <rect x="94" y="22" width="10" height="4" rx="2" fill="#38BDF8" />

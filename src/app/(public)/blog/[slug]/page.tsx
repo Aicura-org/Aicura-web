@@ -3,9 +3,6 @@
 import React, { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import { Clock, ArrowLeft, Calendar, User, Loader2 } from 'lucide-react';
 
 interface BlogItem {
@@ -46,37 +43,26 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
-        <Header />
-        <div className="py-20 flex flex-col items-center justify-center gap-2 text-slate-400">
-          <Loader2 className="w-8 h-8 animate-spin text-brand-700" />
-          <p className="text-xs font-semibold">Loading article...</p>
-        </div>
-        <Footer />
+      <div className="py-20 flex flex-col items-center justify-center gap-2 text-slate-400">
+        <Loader2 className="w-8 h-8 animate-spin text-brand-700" />
+        <p className="text-xs font-semibold">Loading article...</p>
       </div>
     );
   }
 
   if (!blog) {
     return (
-      <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
-        <Header />
-        <div className="py-20 text-center text-slate-700 font-semibold space-y-3">
-          <p className="text-lg">Article Not Found</p>
-          <Link href="/blog" className="text-xs text-brand-700 hover:underline">
-            ← Back to Articles
-          </Link>
-        </div>
-        <Footer />
+      <div className="py-20 text-center text-slate-700 font-semibold space-y-3">
+        <p className="text-lg">Article Not Found</p>
+        <Link href="/blog" className="text-xs text-brand-700 hover:underline">
+          ← Back to Articles
+        </Link>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
-      <Header />
-
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full space-y-8">
+    <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-8">
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-xs font-bold text-brand-700 hover:text-brand-900 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200"
@@ -126,10 +112,6 @@ export default function BlogDetailPage({ params }: { params: Promise<{ slug: str
 
           <div className="space-y-4 pt-2 font-sans" dangerouslySetInnerHTML={{ __html: blog.content }} />
         </article>
-      </main>
-
-      <Footer />
-      <WhatsAppBtn />
-    </div>
+    </main>
   );
 }

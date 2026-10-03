@@ -1,7 +1,4 @@
 import React from 'react';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
 import HeroSection from '@/components/home/HeroSection';
 import QuickActions from '@/components/home/QuickActions';
 import PopularPackages from '@/components/home/PopularPackages';
@@ -77,23 +74,18 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 font-sans selection:bg-yellow-400 selection:text-brand-900">
-      <Header />
-      <main className="flex-1">
-        <HeroSection initialBanners={heroBanners} />
-        <QuickActions />
-        <PopularPackages />
-        <DoorstepCare initialData={aboutSection} />
-        <HomeCollectionBanner initialData={homeCollectionBanner} />
-        <HowItWorks />
-        <WhyAiCura />
-        <TestimonialsSection />
-        <BlogSection />
-        <FAQSection />
-        <CTABanner />
-      </main>
-      <Footer />
-      <WhatsAppBtn />
+    <div className="bg-slate-50 font-sans selection:bg-yellow-400 selection:text-brand-900">
+      <HeroSection initialBanners={heroBanners} />
+      <QuickActions />
+      <PopularPackages />
+      <DoorstepCare initialData={aboutSection} />
+      <HomeCollectionBanner initialData={homeCollectionBanner} />
+      <HowItWorks />
+      <WhyAiCura />
+      <TestimonialsSection />
+      <BlogSection />
+      <FAQSection />
+      <CTABanner />
     </div>
   );
 }

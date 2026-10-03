@@ -96,7 +96,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
   if (totalSlides === 0) {
     return (
       <section className="w-full overflow-hidden">
-        <div className="relative w-full h-[65vh] min-h-[480px] lg:h-[82vh] bg-slate-950 overflow-hidden">
+        <div className="relative w-full h-[calc(100svh-80px)] min-h-[320px] lg:h-[calc(100svh-110px)] bg-slate-950 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-brand-950 via-brand-900 to-slate-900" />
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
       aria-roledescription="carousel"
       aria-label="Homepage Hero Banners"
     >
-      <div className="relative w-full h-[65vh] min-h-[480px] lg:h-[82vh]">
+      <div className="relative w-full h-[calc(100svh-80px)] min-h-[320px] lg:h-[calc(100svh-110px)]">
         {/* Slides Track */}
         {validSlides.map((slide, index) => {
           const isCurrent = index === currentIndex;
@@ -203,7 +203,7 @@ export default function HeroSection({ initialBanners }: HeroSectionProps) {
             </button>
 
             {/* Carousel Indicator Dots */}
-            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20 bg-black/30 backdrop-blur-md px-3.5 py-2 rounded-full border border-white/10">
+            <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20 px-3.5 py-2">
               {validSlides.map((_, idx) => (
                 <button
                   key={idx}

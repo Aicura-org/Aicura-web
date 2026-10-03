@@ -3,14 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  ShieldCheck, 
-  Award, 
-  Microscope, 
-  CheckCircle2, 
-  Clock, 
+import {
+  ShieldCheck,
+  Award,
+  Microscope,
+  CheckCircle2,
+  Clock,
   ArrowRight,
-  Stethoscope
+  Stethoscope,
 } from 'lucide-react';
 import EnquireModal from '../ui/EnquireModal';
 
@@ -26,6 +26,8 @@ export interface AboutSectionData {
   badge2Title?: string | null;
   badge2Subtitle?: string | null;
   badge3Text?: string | null;
+  badge3Title?: string | null;
+  badge3Subtitle?: string | null;
   pillar1Title?: string | null;
   pillar1Desc?: string | null;
   pillar2Title?: string | null;
@@ -57,6 +59,8 @@ const defaultAbout = {
   badge2Title: '99.8% Precision',
   badge2Subtitle: 'Double Verified Results',
   badge3Text: '10,000+ Happy Patients',
+  badge3Title: 'Happy Clients',
+  badge3Subtitle: '10k+ Patients Served',
   pillar1Title: 'Fully Automated Analyzers',
   pillar1Desc: 'Advanced robotic equipment ensuring error-free testing with rapid turnaround.',
   pillar2Title: 'NABL & ISO Compliant',
@@ -98,156 +102,151 @@ export default function DoorstepCare({ initialData }: DoorstepCareProps) {
   const badge1Subtitle = about.badge1Subtitle || defaultAbout.badge1Subtitle;
   const badge2Title = about.badge2Title || defaultAbout.badge2Title;
   const badge2Subtitle = about.badge2Subtitle || defaultAbout.badge2Subtitle;
-  const badge3Text = about.badge3Text || defaultAbout.badge3Text;
+  const badge3Title = (about as AboutSectionData).badge3Title || defaultAbout.badge3Title;
+  const badge3Subtitle =
+    (about as AboutSectionData).badge3Subtitle || defaultAbout.badge3Subtitle;
 
   const pillars = [
     {
       icon: Microscope,
       title: about.pillar1Title || defaultAbout.pillar1Title,
       desc: about.pillar1Desc || defaultAbout.pillar1Desc,
+      card: 'bg-brand-50',
+      box: 'bg-brand-100',
+      iconColor: 'text-brand-700',
     },
     {
       icon: ShieldCheck,
       title: about.pillar2Title || defaultAbout.pillar2Title,
       desc: about.pillar2Desc || defaultAbout.pillar2Desc,
+      card: 'bg-emerald-50',
+      box: 'bg-emerald-100',
+      iconColor: 'text-emerald-700',
     },
     {
       icon: Stethoscope,
       title: about.pillar3Title || defaultAbout.pillar3Title,
       desc: about.pillar3Desc || defaultAbout.pillar3Desc,
+      card: 'bg-amber-50',
+      box: 'bg-amber-100',
+      iconColor: 'text-amber-700',
     },
     {
       icon: Clock,
       title: about.pillar4Title || defaultAbout.pillar4Title,
       desc: about.pillar4Desc || defaultAbout.pillar4Desc,
+      card: 'bg-sky-50',
+      box: 'bg-sky-100',
+      iconColor: 'text-sky-700',
     },
   ];
 
   return (
     <>
-      <section className="py-20 bg-gradient-to-b from-white via-slate-50/70 to-slate-100/60 border-y border-slate-200/80 overflow-hidden relative">
-        {/* Subtle decorative background lights */}
-        <div className="absolute top-10 left-10 w-72 h-72 bg-emerald-100/40 rounded-full blur-3xl pointer-events-none -z-10" />
-        <div className="absolute bottom-10 right-10 w-80 h-80 bg-amber-100/40 rounded-full blur-3xl pointer-events-none -z-10" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-            
-            {/* Left Content Column */}
-            <div className="lg:col-span-6 space-y-6">
-              
-              {/* Clean Badge Without Sprinkle */}
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 shadow-xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span className="text-xs font-bold text-brand-800 tracking-wider uppercase">
+      <section className="bg-white py-10 md:py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* 1. Content on the left, image on the right */}
+          <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12">
+            <div className="space-y-5">
+              <div>
+                <span className="text-brand-700 text-[11px] md:text-xs font-bold tracking-wider uppercase block mb-1">
                   {badgeText}
                 </span>
+                <h2 className="text-xl sm:text-3xl font-bold text-black font-sans tracking-tight leading-snug">
+                  {titlePrefix}{' '}
+                  <span className="text-brand-700">{titleHighlight}</span>
+                </h2>
               </div>
-              
-              {/* Main Headline */}
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 font-sans tracking-tight leading-[1.15]">
-                {titlePrefix} <span className="text-brand-700">{titleHighlight}</span>
-              </h2>
 
-              {/* Description */}
-              <p className="text-slate-600 text-base leading-relaxed">
+              <p className="text-sm leading-relaxed text-slate-600 sm:text-base pb-5">
                 {description}
               </p>
-
-              {/* 4 Feature Pillars Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                {pillars.map((item, idx) => {
-                  const Icon = item.icon;
-                  return (
-                    <div 
-                      key={idx} 
-                      className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-xs hover:border-emerald-300 hover:shadow-sm transition-all group"
-                    >
-                      <div className="flex items-center gap-2.5 mb-1.5">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        <h4 className="text-xs font-bold text-slate-900 leading-snug">
-                          {item.title}
-                        </h4>
-                      </div>
-                      <p className="text-[11px] text-slate-500 leading-relaxed pl-10">
-                        {item.desc}
-                      </p>
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="pt-3 flex flex-wrap items-center gap-4">
+              <div className="flex flex-col gap-3 sm:flex-row">
                 <Link
                   href={about.primaryBtnLink || defaultAbout.primaryBtnLink}
-                  className="inline-flex items-center gap-2 px-7 py-3.5 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-sm rounded-full shadow-md hover:shadow-lg transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  className="gold-gradient hover:gold-gradient-hover inline-flex items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-bold text-brand-900 transition-transform active:scale-[0.98]"
                 >
                   <span>{about.primaryBtnText || defaultAbout.primaryBtnText}</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="h-4 w-4" />
                 </Link>
-
                 <button
                   type="button"
                   onClick={() => setModalOpen(true)}
-                  className="inline-flex items-center gap-2 px-6 py-3.5 bg-white border border-slate-300 text-slate-700 hover:text-brand-800 hover:border-brand-700 font-semibold text-sm rounded-full shadow-xs hover:bg-slate-50 transition-colors"
+                  className="inline-flex items-center justify-center rounded-full bg-slate-100 px-6 py-3.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200 hover:text-brand-800"
                 >
                   <span>{about.secondaryBtnText || defaultAbout.secondaryBtnText}</span>
                 </button>
               </div>
-
             </div>
 
-            {/* Right Graphic Column */}
-            <div className="lg:col-span-6 relative">
-              
-              {/* Main Laboratory Image */}
-              <div className="relative rounded-3xl overflow-hidden border border-slate-200/90 shadow-2xl h-[440px] sm:h-[500px] w-full group bg-slate-900">
+            <div>
+              <div className="relative h-56 w-full overflow-hidden rounded-[1.75rem] sm:h-72 lg:h-96 lg:rounded-[2.5rem]">
                 <Image
                   src={imageUrl}
                   alt="AiCura Advanced Clinical Diagnostics Laboratory"
                   fill
                   unoptimized
-                  className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="object-cover"
                 />
-                
-                {/* Gradient Overlay for card contrast */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/20 pointer-events-none" />
-
-                {/* Floating Badge 1: Top Right */}
-                <div className="absolute top-6 right-6 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200/80 shadow-xl flex items-center gap-3 max-w-xs transition-transform hover:-translate-y-1">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 text-brand-700 flex items-center justify-center shrink-0">
-                    <Award className="w-5 h-5 text-emerald-700" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 leading-tight">{badge1Title}</h4>
-                    <span className="text-[11px] text-slate-500">{badge1Subtitle}</span>
-                  </div>
-                </div>
-
-                {/* Floating Badge 2: Bottom Left */}
-                <div className="absolute bottom-6 left-6 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl border border-slate-200/80 shadow-xl flex items-center gap-3 max-w-xs transition-transform hover:-translate-y-1">
-                  <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center shrink-0">
-                    <ShieldCheck className="w-5 h-5 text-amber-700" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-slate-900 leading-tight">{badge2Title}</h4>
-                    <span className="text-[11px] text-slate-500">{badge2Subtitle}</span>
-                  </div>
-                </div>
-
-                {/* Floating Badge 3: Center Bottom Mini Tag */}
-                <div className="absolute bottom-6 right-6 bg-brand-800/90 text-white backdrop-blur-md px-3.5 py-2 rounded-xl border border-emerald-500/50 shadow-lg flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-yellow-400" />
-                  <span className="text-xs font-semibold">{badge3Text}</span>
-                </div>
-
               </div>
 
-            </div>
+              {/* Badges panel: below image on mobile, overlapping image from sm up.
+                  Mobile: 2 centered cards on row 1, 1 full-width centered card on row 2.
+                  sm and up: original 3 columns. */}
+              <div className="relative z-10 mx-0 mt-3 grid grid-cols-2 gap-2.5 rounded-3xl p-0 sm:mx-4 sm:-mt-10 sm:grid-cols-3 sm:gap-2 sm:p-2">
+                <div className="flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-emerald-50 px-2 py-3 text-center sm:flex-row sm:justify-start sm:gap-2.5 sm:p-3 sm:text-left">
+                  <Award className="h-6 w-6 shrink-0 text-emerald-700 sm:h-5 sm:w-5" />
+                  <div className="min-w-0">
+                    <h4 className="text-[13px] font-bold leading-tight text-slate-900 sm:whitespace-nowrap">{badge1Title}</h4>
+                    <span className="mt-0.5 block text-[11px] leading-snug text-slate-600">{badge1Subtitle}</span>
+                  </div>
+                </div>
 
+                <div className="flex flex-col items-center justify-center gap-1.5 rounded-2xl bg-amber-50 px-2 py-3 text-center sm:flex-row sm:justify-start sm:gap-2.5 sm:p-3 sm:text-left">
+                  <ShieldCheck className="h-6 w-6 shrink-0 text-amber-700 sm:h-5 sm:w-5" />
+                  <div className="min-w-0">
+                    <h4 className="text-[13px] font-bold leading-tight text-slate-900 sm:whitespace-nowrap">{badge2Title}</h4>
+                    <span className="mt-0.5 block text-[11px] leading-snug text-slate-600">{badge2Subtitle}</span>
+                  </div>
+                </div>
+
+                {/* Full width + centered on mobile, normal single column on desktop */}
+                <div className="col-span-2 flex items-center justify-center gap-2.5 rounded-2xl bg-brand-50 px-3 py-3 text-left sm:col-span-1 sm:justify-start sm:p-3">
+                  <CheckCircle2 className="h-6 w-6 shrink-0 text-brand-700 sm:h-5 sm:w-5" />
+                  <div className="min-w-0">
+                    <h4 className="text-[13px] font-bold leading-tight text-slate-900 sm:whitespace-nowrap">{badge3Title}</h4>
+                    <span className="mt-0.5 block text-[11px] leading-snug text-slate-600">{badge3Subtitle}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Pillars: compact icon-left list on mobile, 2 cols on sm, 4 across on desktop */}
+          <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-x-4 sm:gap-y-8 md:mt-12 lg:grid-cols-4 lg:gap-8">
+            {pillars.map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={idx}
+                  className={`group flex items-center gap-3.5 rounded-2xl p-4 sm:block sm:p-5 ${item.card}`}
+                >
+                  <div
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl sm:mb-3 ${item.box} ${item.iconColor} transition-transform group-hover:scale-105`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-[15px] font-bold leading-snug text-slate-900 sm:text-base">
+                      {item.title}
+                    </h4>
+                    <p className="mt-1 text-xs leading-relaxed text-slate-500 sm:mt-1.5 sm:text-sm">
+                      {item.desc}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

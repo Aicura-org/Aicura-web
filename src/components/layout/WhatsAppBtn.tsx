@@ -1,11 +1,23 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
 
 export default function WhatsAppBtn() {
-  const whatsappNumber = '919946284615';
+  const [whatsappNumber, setWhatsappNumber] = useState('919946284615');
   const defaultText = encodeURIComponent('Hello AiCura Diagnostics, I would like to enquire about a diagnostic test/package.');
+
+  useEffect(() => {
+    fetch('/api/company-details?primary=true')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.success && json.data?.whatsappNumber) {
+          const sanitized = json.data.whatsappNumber.replace(/\D/g, '');
+          if (sanitized) setWhatsappNumber(sanitized);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <a

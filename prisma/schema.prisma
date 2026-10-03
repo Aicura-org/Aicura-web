@@ -7,26 +7,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum AdminRole {
-  SUPER_ADMIN
-  ADMIN
-  STAFF
-}
-
-enum EnquiryType {
-  HOME_COLLECTION
-  PACKAGE
-  CONTACT
-}
-
-enum EnquiryStatus {
-  NEW
-  CONTACTED
-  CONFIRMED
-  COMPLETED
-  CANCELLED
-}
-
 model AdminUser {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -83,13 +63,13 @@ model Campaign {
 model CampaignSection {
   id           String   @id @default(cuid())
   campaignId   String
-  campaign     Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   title        String
   content      String
   imageUrl     String?
   displayOrder Int      @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  campaign     Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 }
 
 model Customer {
@@ -111,9 +91,7 @@ model Enquiry {
   id              String          @id @default(cuid())
   type            EnquiryType
   customerId      String
-  customer        Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
   campaignId      String?
-  campaign        Campaign?       @relation(fields: [campaignId], references: [id], onDelete: SetNull)
   status          EnquiryStatus   @default(NEW)
   message         String?
   prescriptionUrl String?
@@ -121,8 +99,10 @@ model Enquiry {
   preferredTime   String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
-  tests           EnquiryTest[]
+  campaign        Campaign?       @relation(fields: [campaignId], references: [id])
+  customer        Customer        @relation(fields: [customerId], references: [id], onDelete: Cascade)
   package         EnquiryPackage?
+  tests           EnquiryTest[]
 
   @@index([customerId])
   @@index([campaignId])
@@ -133,19 +113,19 @@ model Enquiry {
 model EnquiryTest {
   id        String   @id @default(cuid())
   enquiryId String
-  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
   testName  String
   createdAt DateTime @default(now())
+  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
 }
 
 model EnquiryPackage {
   id        String   @id @default(cuid())
   enquiryId String   @unique
-  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
   packageId String
-  package   Package  @relation(fields: [packageId], references: [id], onDelete: Restrict)
   quantity  Int      @default(1)
   createdAt DateTime @default(now())
+  enquiry   Enquiry  @relation(fields: [enquiryId], references: [id], onDelete: Cascade)
+  package   Package  @relation(fields: [packageId], references: [id])
 }
 
 model DiagnosticTest {
@@ -180,15 +160,15 @@ model Blog {
 }
 
 model Testimonial {
-  id         String   @id @default(cuid())
+  id          String   @id @default(cuid())
   patientName String
-  location   String
-  comment    String
-  rating     Int      @default(5)
-  avatarUrl  String?
-  isFeatured Boolean  @default(true)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  location    String
+  comment     String
+  rating      Int      @default(5)
+  avatarUrl   String?
+  isFeatured  Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model FAQ {
@@ -222,13 +202,15 @@ model HomeCollectionBanner {
   id                String   @id @default(cuid())
   badgeText         String?  @default("HOME COLLECTION")
   titlePrefix       String?  @default("Healthcare that")
-  titleHighlight    String?  @default("comes home.")
+  titleHighlight    String?  @default("comes home")
   subtitle          String?  @default("Professional sample collection at your doorstep. Safe, convenient and trusted by thousands.")
   bgImageUrl        String?
   bgImagePublicId   String?
-  bikeImageUrl      String?
-  bikeImagePublicId String?
-  buttonText        String?  @default("Book Home Collection")
+  bikeImageUrl            String?
+  bikeImagePublicId       String?
+  bikeReturnImageUrl      String?
+  bikeReturnImagePublicId String?
+  buttonText              String?  @default("Book Home Collection")
   buttonLink        String?  @default("/home-collection")
   animationSpeed    Int      @default(12)
   animationEnabled  Boolean  @default(true)
@@ -238,33 +220,72 @@ model HomeCollectionBanner {
 }
 
 model AboutSection {
-  id                String   @id @default(cuid())
-  badgeText         String?  @default("About AiCura Diagnostics")
-  titlePrefix       String?  @default("Pioneering Clinical Precision &")
-  titleHighlight    String?  @default("Trusted Healthcare.")
-  description       String?  @default("At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.")
-  imageUrl          String?  @default("https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000")
-  imagePublicId     String?
-  badge1Title       String?  @default("NABL Standard")
-  badge1Subtitle    String?  @default("Quality Assured Testing")
-  badge2Title       String?  @default("99.8% Precision")
-  badge2Subtitle    String?  @default("Double Verified Results")
-  badge3Text        String?  @default("10,000+ Happy Patients")
-  pillar1Title      String?  @default("Fully Automated Analyzers")
-  pillar1Desc       String?  @default("Advanced robotic equipment ensuring error-free testing with rapid turnaround.")
-  pillar2Title      String?  @default("NABL & ISO Compliant")
-  pillar2Desc       String?  @default("Standardized protocols matching the highest global benchmarks for diagnostic accuracy.")
-  pillar3Title      String?  @default("MD Pathologist Verified")
-  pillar3Desc       String?  @default("Every diagnostic report is validated by veteran senior pathologists.")
-  pillar4Title      String?  @default("Same-Day Digital Reports")
-  pillar4Desc       String?  @default("Prompt delivery of secure, comprehensive reports directly via WhatsApp & Email.")
-  primaryBtnText    String?  @default("Learn More About Us")
-  primaryBtnLink    String?  @default("/about")
-  secondaryBtnText  String?  @default("Contact Our Lab")
-  isActive          Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id               String   @id @default(cuid())
+  badgeText        String?  @default("About AiCura Diagnostics")
+  titlePrefix      String?  @default("Pioneering Clinical Precision &")
+  titleHighlight   String?  @default("Trusted Healthcare.")
+  description      String?  @default("At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.")
+  imageUrl         String?  @default("https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000")
+  imagePublicId    String?
+  badge1Title      String?  @default("NABL Standard")
+  badge1Subtitle   String?  @default("Quality Assured Testing")
+  badge2Title      String?  @default("99.8% Precision")
+  badge2Subtitle   String?  @default("Double Verified Results")
+  badge3Text       String?  @default("10,000+ Happy Patients")
+  pillar1Title     String?  @default("Fully Automated Analyzers")
+  pillar1Desc      String?  @default("Advanced robotic equipment ensuring error-free testing with rapid turnaround.")
+  pillar2Title     String?  @default("NABL & ISO Compliant")
+  pillar2Desc      String?  @default("Standardized protocols matching the highest global benchmarks for diagnostic accuracy.")
+  pillar3Title     String?  @default("MD Pathologist Verified")
+  pillar3Desc      String?  @default("Every diagnostic report is validated by veteran senior pathologists.")
+  pillar4Title     String?  @default("Same-Day Digital Reports")
+  pillar4Desc      String?  @default("Prompt delivery of secure, comprehensive reports directly via WhatsApp & Email.")
+  primaryBtnText   String?  @default("Learn More About Us")
+  primaryBtnLink   String?  @default("/about")
+  secondaryBtnText String?  @default("Contact Our Lab")
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 }
 
+model CompanyDetails {
+  id             String   @id @default(cuid())
+  companyName    String
+  branchName     String?
+  address        String
+  city           String?
+  state          String?
+  pincode        String?
+  mobileNumber   String
+  alternatePhone String?
+  whatsappNumber String
+  email          String?
+  mapLink        String
+  workingHours   String?
+  websiteUrl     String?
+  taxNumber      String?
+  isPrimary      Boolean  @default(false)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+}
 
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  STAFF
+}
 
+enum EnquiryType {
+  HOME_COLLECTION
+  PACKAGE
+  CONTACT
+}
+
+enum EnquiryStatus {
+  NEW
+  CONTACTED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}

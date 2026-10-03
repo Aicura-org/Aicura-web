@@ -84,7 +84,7 @@ export default function PackageDetailsModal({
       }}
     >
       <div 
-        className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden relative animate-in zoom-in-95 duration-200"
+        className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
       >
@@ -114,7 +114,7 @@ export default function PackageDetailsModal({
               )}
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-extrabold font-sans text-white leading-tight">
+            <h2 className="text-xl sm:text-2xl font-bold font-sans text-white leading-tight">
               {pkg.title}
             </h2>
 
@@ -157,7 +157,7 @@ export default function PackageDetailsModal({
           {/* Preparation Instructions (if any) */}
           {pkg.preparation && (
             <div className="pt-5">
-              <div className="flex items-start gap-3 p-3.5 bg-amber-50/80 rounded-2xl border border-amber-200/90 text-amber-900">
+              <div className="flex items-center gap-3 p-3.5 bg-amber-50/80 rounded-2xl text-amber-900">
                 <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                 <div className="text-xs space-y-0.5">
                   <span className="font-bold text-amber-950 block">Sample Preparation & Fasting Instructions:</span>
@@ -229,10 +229,10 @@ export default function PackageDetailsModal({
         </div>
 
         {/* Sticky Footer with Pricing & Booking CTA */}
-        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div className="p-4 sm:p-5 bg-slate-50 shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           <div className="flex items-baseline gap-2.5">
             <div>
-              <span className="text-[10px] text-slate-400 uppercase font-semibold block">All Inclusive Price</span>
+              <span className="text-[10px] text-slate-400 uppercase font-bold block">All Inclusive Price</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-2xl font-black text-brand-700 font-sans">
                   ₹{pkg.discountedPrice.toLocaleString('en-IN')}
@@ -245,11 +245,7 @@ export default function PackageDetailsModal({
               </div>
             </div>
 
-            {discountPercent > 0 && (
-              <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-md border border-emerald-200">
-                Save ₹{savings.toLocaleString('en-IN')} ({discountPercent}% OFF)
-              </span>
-            )}
+
           </div>
 
           <div className="flex items-center gap-2">

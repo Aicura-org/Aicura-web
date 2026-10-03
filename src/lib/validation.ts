@@ -87,3 +87,53 @@ export function validateEnquiryInput(body: Partial<CreateEnquiryInput>): ApiErro
 
   return errors;
 }
+
+export function validateCompanyDetailsInput(
+  body: Partial<import('@/types').CreateCompanyDetailsInput>,
+  isUpdate = false
+): ApiErrorDetail[] {
+  const errors: ApiErrorDetail[] = [];
+
+  if (!isUpdate) {
+    if (!body.companyName || typeof body.companyName !== 'string' || body.companyName.trim().length === 0) {
+      errors.push({ field: 'companyName', message: 'Company Name is required' });
+    }
+    if (!body.address || typeof body.address !== 'string' || body.address.trim().length === 0) {
+      errors.push({ field: 'address', message: 'Address is required' });
+    }
+    if (!body.mobileNumber || typeof body.mobileNumber !== 'string' || body.mobileNumber.trim().length === 0) {
+      errors.push({ field: 'mobileNumber', message: 'Mobile Number is required' });
+    }
+    if (!body.whatsappNumber || typeof body.whatsappNumber !== 'string' || body.whatsappNumber.trim().length === 0) {
+      errors.push({ field: 'whatsappNumber', message: 'WhatsApp Number is required' });
+    }
+    if (!body.mapLink || typeof body.mapLink !== 'string' || body.mapLink.trim().length === 0) {
+      errors.push({ field: 'mapLink', message: 'Map Link is required' });
+    }
+  } else {
+    if (body.companyName !== undefined && (typeof body.companyName !== 'string' || body.companyName.trim().length === 0)) {
+      errors.push({ field: 'companyName', message: 'Company Name cannot be empty' });
+    }
+    if (body.address !== undefined && (typeof body.address !== 'string' || body.address.trim().length === 0)) {
+      errors.push({ field: 'address', message: 'Address cannot be empty' });
+    }
+    if (body.mobileNumber !== undefined && (typeof body.mobileNumber !== 'string' || body.mobileNumber.trim().length === 0)) {
+      errors.push({ field: 'mobileNumber', message: 'Mobile Number cannot be empty' });
+    }
+    if (body.whatsappNumber !== undefined && (typeof body.whatsappNumber !== 'string' || body.whatsappNumber.trim().length === 0)) {
+      errors.push({ field: 'whatsappNumber', message: 'WhatsApp Number cannot be empty' });
+    }
+    if (body.mapLink !== undefined && (typeof body.mapLink !== 'string' || body.mapLink.trim().length === 0)) {
+      errors.push({ field: 'mapLink', message: 'Map Link cannot be empty' });
+    }
+  }
+
+  if (body.email && typeof body.email === 'string' && body.email.trim().length > 0) {
+    if (!body.email.includes('@')) {
+      errors.push({ field: 'email', message: 'Please provide a valid email address' });
+    }
+  }
+
+  return errors;
+}
+
