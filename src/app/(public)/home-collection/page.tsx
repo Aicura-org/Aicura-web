@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { CheckCircle2, Upload, Loader2 } from 'lucide-react';
 
 export default function HomeCollectionPage() {
@@ -79,24 +80,37 @@ export default function HomeCollectionPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       {/* Banner */}
-      <div className="hero-gradient text-white py-14 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center space-y-3">
-          <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest">
-            Doorstep Diagnostics
-          </span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold font-sans">
-            Home Sample Collection Service
-          </h1>
-          <p className="text-slate-200 text-sm max-w-2xl mx-auto">
-            Hassle-free blood and clinical sample collection right from the comfort of your home by certified phlebotomists.
-          </p>
+      <section className="relative w-full h-[50vh] min-h-[250px] bg-white border-b border-slate-200 shadow-sm overflow-hidden flex items-center">
+        <Image
+          src="/Home Blood Draw in a Bright Living Room.png"
+          alt="Home Sample Collection Service - AiCura Diagnostics"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center w-full h-full"
+        />
+        {/* Heading Overlay on Top of Image - Left Aligned with Black Text */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-2xl space-y-3 text-left">
+              <span className="inline-block text-black bg-yellow-400 font-bold text-xs uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                Doorstep Diagnostics
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-black tracking-tight">
+                Home Sample Collection Service
+              </h1>
+              <p className="text-slate-800 text-sm sm:text-base font-medium max-w-xl leading-relaxed">
+                Hassle-free blood and clinical sample collection right from the comfort of your home by certified phlebotomists.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full space-y-12">
         {/* Main Booking Form Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          
+
           {/* Form */}
           <div className="lg:col-span-7 bg-white p-8 rounded-3xl border border-slate-200 shadow-lg">
             <h2 className="text-2xl font-bold text-slate-900 mb-2">Book Your Collection Slot</h2>
@@ -120,7 +134,7 @@ export default function HomeCollectionPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-slate-700 mb-1">Full Name *</label>

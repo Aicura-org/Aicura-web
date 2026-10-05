@@ -47,20 +47,33 @@ export default function PackagesPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      {/* Hero Banner */}
-      <div className="hero-gradient text-white py-14 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center space-y-3">
-          <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest inline-flex items-center gap-1.5">
-            <Sparkles className="w-3.5 h-3.5" /> Preventative Diagnostic Care
-          </span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold font-sans">
-            Comprehensive Health Packages
-          </h1>
-          <p className="text-slate-200 text-sm max-w-2xl mx-auto">
-            Choose from doctor-curated checkup packages designed for every age group and wellness need. Includes free home sample collection!
-          </p>
+      {/* Banner */}
+      <section className="relative w-full h-[50vh] min-h-[250px] bg-white border-b border-slate-200 shadow-sm overflow-hidden flex items-center">
+        <Image
+          src="/Modern Clinic Blood Pressure Check.png"
+          alt="Comprehensive Health Packages - AiCura Diagnostics"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center w-full h-full"
+        />
+        {/* Heading Overlay on Top of Image - Left Aligned with Black Text */}
+        <div className="absolute inset-0 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-2xl space-y-3 text-left">
+              <span className="inline-flex items-center gap-1.5 text-black bg-yellow-400 font-bold text-xs uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-black" /> Preventative Diagnostic Care
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-black tracking-tight">
+                Comprehensive Health Packages
+              </h1>
+              <p className="text-slate-800 text-sm sm:text-base font-medium max-w-xl leading-relaxed">
+                Choose from doctor-curated checkup packages designed for every age group and wellness need. Includes free home sample collection!
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Packages Listing */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full">
