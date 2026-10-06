@@ -8,24 +8,26 @@ if (!connectionString) {
   console.error('[Prisma] CRITICAL: DATABASE_URL environment variable is missing.');
 }
 
-const pool = new Pool({
-  connectionString,
-  ssl: false,
-  max: 10,
-});
-const adapter = new PrismaPg(pool);
+const isLocalhost =
+  !connectionString ||
+  connectionString.includes('localhost') ||
+  connectionString.includes('127.0.0.1') ||
+  connectionString.includes('sslmode=disable');
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
+  pool: Pool | undefined;
 };
 
-// Clear stale in-memory cached instance so updated schema fields are picked up immediately
-if (globalForPrisma.prisma) {
-  try {
-    globalForPrisma.prisma.$disconnect();
-  } catch {}
-  globalForPrisma.prisma = undefined;
-}
+const pool =
+  globalForPrisma.pool ??
+  new Pool({
+    connectionString,
+    ssl: isLocalhost ? false : { rejectUnauthorized: false },
+    max: process.env.NODE_ENV === 'production' ? 5 : 10,
+  });
+
+const adapter = new PrismaPg(pool);
 
 export const prisma =
   globalForPrisma.prisma ??
@@ -34,4 +36,7 @@ export const prisma =
     log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
   });
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prisma;
+  globalForPrisma.pool = pool;
+}
