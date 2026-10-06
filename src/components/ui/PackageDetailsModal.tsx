@@ -30,15 +30,20 @@ export default function PackageDetailsModal({
 }: PackageDetailsModalProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Lock body scroll when modal is open
+  // Robust background scroll lock when modal is open
   useEffect(() => {
-    if (isOpen) {
-      const originalOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = originalOverflow;
-      };
-    }
+    if (!isOpen) return;
+
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    };
   }, [isOpen]);
 
   // Handle ESC key
@@ -78,15 +83,19 @@ export default function PackageDetailsModal({
 
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-sm animate-in fade-in duration-200 overscroll-contain"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
+      onTouchMove={(e) => {
+        if (e.target === e.currentTarget) e.preventDefault();
+      }}
     >
       <div 
-        className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200"
+        className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-200 overscroll-contain"
         role="dialog"
         aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
       >
         {/* Header with Background/Image banner */}
         <div className="relative bg-brand-900 text-white p-6 sm:p-7 shrink-0 overflow-hidden">
@@ -125,7 +134,7 @@ export default function PackageDetailsModal({
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1 divide-y divide-slate-100">
+        <div className="p-5 sm:p-6 overflow-y-auto overscroll-contain space-y-6 flex-1 divide-y divide-slate-100">
           
           {/* Key Info Highlight Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -149,7 +158,7 @@ export default function PackageDetailsModal({
 
             <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3 flex flex-col items-center text-center">
               <ShieldCheck className="w-5 h-5 text-amber-600 mb-1.5" />
-              <span className="text-xs font-bold text-slate-900">NABL Aligned</span>
+              <span className="text-xs font-bold text-slate-900">Quality Aligned</span>
               <span className="text-[10px] text-slate-500">Doctor Verified</span>
             </div>
           </div>

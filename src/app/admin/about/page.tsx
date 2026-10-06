@@ -62,14 +62,14 @@ const defaultData: AboutData = {
   imageUrl:
     'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000',
   imagePublicId: null,
-  badge1Title: 'NABL Standard',
+  badge1Title: 'Certified Standard',
   badge1Subtitle: 'Quality Assured Testing',
   badge2Title: '99.8% Precision',
   badge2Subtitle: 'Double Verified Results',
   badge3Text: '10,000+ Happy Patients',
   pillar1Title: 'Fully Automated Analyzers',
   pillar1Desc: 'Advanced robotic equipment ensuring error-free testing with rapid turnaround.',
-  pillar2Title: 'NABL & ISO Compliant',
+  pillar2Title: 'ISO Compliant & Certified',
   pillar2Desc: 'Standardized protocols matching the highest global benchmarks for diagnostic accuracy.',
   pillar3Title: 'MD Pathologist Verified',
   pillar3Desc: 'Every diagnostic report is validated by veteran senior pathologists.',
@@ -687,7 +687,7 @@ export default function AdminAboutPage() {
                 {/* Pillar 2 */}
                 <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                   <span className="text-[10px] font-bold uppercase text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">
-                    Pillar 2 (NABL / ISO)
+                    Pillar 2 (Quality / ISO)
                   </span>
                   <div>
                     <label className="block font-semibold text-slate-700 mb-1">Title</label>

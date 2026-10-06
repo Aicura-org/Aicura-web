@@ -42,6 +42,37 @@ export async function POST(
   }
 }
 
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const adminSession = await getAdminFromRequest(req);
+    if (!adminSession) {
+      return unauthorizedResponse('Authentication required to update section');
+    }
+
+    const { searchParams } = new URL(req.url);
+    const body = await req.json().catch(() => ({}));
+    const sectionId = searchParams.get('sectionId') || body.sectionId || body.id;
+
+    if (!sectionId) {
+      return validationErrorResponse([{ field: 'sectionId', message: 'sectionId is required' }]);
+    }
+
+    const updated = await CampaignService.updateSection(sectionId, {
+      title: body.title,
+      content: body.content,
+      imageUrl: body.imageUrl,
+      displayOrder: body.displayOrder,
+    });
+
+    return successResponse(updated, 'Campaign section updated');
+  } catch (error) {
+    return internalErrorResponse(error);
+  }
+}
+
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }

@@ -293,7 +293,7 @@ export const INITIAL_FAQS: FAQItem[] = [
   {
     id: "faq-1",
     question: "How does home sample collection work?",
-    answer: "Once you book a home sample collection online or over phone, our certified phlebotomist visits your doorstep at your chosen time slot adhering to strict safety & hygiene protocols. Your samples are safely transported in temperature-controlled kits to our NABL-certified lab."
+    answer: "Once you book a home sample collection online or over phone, our certified phlebotomist visits your doorstep at your chosen time slot adhering to strict safety & hygiene protocols. Your samples are safely transported in temperature-controlled kits to our certified diagnostic lab."
   },
   {
     id: "faq-2",

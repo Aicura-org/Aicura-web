@@ -3,8 +3,9 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Image from 'next/image';
+import Link from 'next/link';
 import EnquireModal from '@/components/ui/EnquireModal';
-import { Filter, Droplet, Clock, AlertCircle, Loader2 } from 'lucide-react';
+import { Filter, Droplet, Clock, AlertCircle, Loader2, ArrowRight, ExternalLink } from 'lucide-react';
 
 interface TestItem {
   id: string;
@@ -25,6 +26,7 @@ function TestsContent() {
   const initialQuery = searchParams.get('q') || '';
 
   const [tests, setTests] = useState<TestItem[]>([]);
+  const [categories, setCategories] = useState<string[]>(['All']);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
@@ -34,11 +36,20 @@ function TestsContent() {
   useEffect(() => {
     async function loadTests() {
       try {
-        const res = await fetch('/api/tests');
+        const res = await fetch('/api/tests?withCategories=true');
         if (res.ok) {
           const data = await res.json();
           if (data.success && data.data) {
-            setTests(data.data);
+            if (Array.isArray(data.data)) {
+              setTests(data.data);
+              const distinct = Array.from(new Set(data.data.map((t: TestItem) => t.category).filter(Boolean)));
+              setCategories(['All', ...distinct as string[]]);
+            } else {
+              setTests(data.data.tests || []);
+              if (data.data.categories?.length) {
+                setCategories(data.data.categories);
+              }
+            }
           }
         }
       } catch (err) {
@@ -50,10 +61,10 @@ function TestsContent() {
     loadTests();
   }, []);
 
-  const categories = ['All', 'Hematology', 'Biochemistry', 'Endocrinology', 'Diabetology', 'Vitamins'];
-
   const filteredTests = tests.filter((t) => {
-    const matchesCat = selectedCategory === 'All' || t.category.toLowerCase().includes(selectedCategory.toLowerCase());
+    const matchesCat =
+      selectedCategory === 'All' ||
+      t.category.toLowerCase() === selectedCategory.toLowerCase();
     const matchesSearch =
       !searchQuery ||
       t.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -68,9 +79,9 @@ function TestsContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">      
+    <div className="min-h-screen flex flex-col bg-slate-50 font-sans">      
       {/* Banner */}
-      <section className="relative w-full h-[50vh] min-h-[250px] bg-white border-b border-slate-200 shadow-sm overflow-hidden flex items-center">
+      <section className="relative w-full h-[45vh] min-h-[260px] bg-white border-b border-slate-200 shadow-sm overflow-hidden flex items-center">
         <Image
           src="/Modern Diagnostic Testing Banner.png"
           alt="Diagnostic Tests & Services - AiCura Diagnostics"
@@ -79,18 +90,18 @@ function TestsContent() {
           sizes="100vw"
           className="object-cover object-center w-full h-full"
         />
-        {/* Heading Overlay on Top of Image - Left Aligned with Black Text */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl space-y-3 text-left">
-              <span className="inline-block text-black bg-yellow-400 font-bold text-xs uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
-                Accurate Diagnostic Testing
+              <span className="inline-block text-brand-900 bg-yellow-400 font-extrabold text-xs uppercase tracking-widest px-3 py-1 rounded-full shadow-sm">
+                Certified Diagnostic Testing
               </span>
-              <h1 className="text-3xl sm:text-5xl font-extrabold text-black tracking-tight">
-                Diagnostic Tests & Services
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-md">
+                Diagnostic Tests &amp; Services
               </h1>
-              <p className="text-slate-800 text-sm sm:text-base font-medium max-w-xl leading-relaxed">
-                Browse our catalogue of NABL accredited pathology and clinical lab tests with doorstep home sample collection.
+              <p className="text-slate-200 text-sm sm:text-base font-medium max-w-xl leading-relaxed">
+                Browse our catalogue of certified pathology and clinical lab tests with doorstep home sample collection.
               </p>
             </div>
           </div>
@@ -102,8 +113,8 @@ function TestsContent() {
         
         {/* Controls Bar */}
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm mb-8">
-          {/* Category Filter Pills */}
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
+          {/* Category Filter Pills (Database-Driven) */}
+          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 sm:pb-0">
             <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1 shrink-0 mr-1">
               <Filter className="w-3.5 h-3.5 text-brand-700" /> Filter:
             </span>
@@ -112,7 +123,7 @@ function TestsContent() {
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={`px-4 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
-                  selectedCategory === cat
+                  selectedCategory.toLowerCase() === cat.toLowerCase()
                     ? 'bg-brand-700 text-yellow-400 shadow-sm'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
@@ -130,7 +141,7 @@ function TestsContent() {
             <p className="text-xs font-semibold">Loading diagnostic tests...</p>
           </div>
         ) : filteredTests.length === 0 ? (
-          <div className="py-20 text-center text-slate-500 text-xs">
+          <div className="py-20 text-center text-slate-500 text-xs bg-white rounded-3xl border border-slate-200 p-8">
             No diagnostic tests match your search criteria.
           </div>
         ) : (
@@ -150,13 +161,17 @@ function TestsContent() {
                     </span>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-700 transition-colors">
-                    {test.name}
-                  </h3>
+                  <Link href={`/tests-services/${test.code.toLowerCase()}`}>
+                    <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-700 transition-colors">
+                      {test.name}
+                    </h3>
+                  </Link>
 
-                  <p className="text-slate-600 text-xs leading-relaxed line-clamp-2">
-                    {test.description}
-                  </p>
+                  {test.description && (
+                    <p className="text-slate-600 text-xs leading-relaxed line-clamp-2">
+                      {test.description}
+                    </p>
+                  )}
 
                   {/* Details Badges */}
                   <div className="grid grid-cols-2 gap-2 pt-2 text-[11px] text-slate-500">
@@ -173,29 +188,39 @@ function TestsContent() {
                   {test.fastingRequired && (
                     <div className="flex items-center gap-1.5 text-[11px] text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-200/60 font-medium">
                       <AlertCircle className="w-3.5 h-3.5 shrink-0 text-amber-600" />
-                      <span>Fasting Required</span>
+                      <span>Fasting Required (10-12 hrs)</span>
                     </div>
                   )}
                 </div>
 
-                {/* Price & Action */}
-                <div className="pt-5 border-t border-slate-100 mt-5 flex items-center justify-between">
-                  <div>
-                    <span className="text-xs text-slate-400 block">Test Fee</span>
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-xl font-extrabold text-brand-700">₹{test.price}</span>
-                      {test.originalPrice && (
-                        <span className="text-xs text-slate-400 line-through">₹{test.originalPrice}</span>
-                      )}
+                {/* Price & Actions */}
+                <div className="pt-5 border-t border-slate-100 mt-5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-xs text-slate-400 block">Test Fee</span>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-xl font-extrabold text-brand-700">₹{test.price}</span>
+                        {test.originalPrice && (
+                          <span className="text-xs text-slate-400 line-through">₹{test.originalPrice}</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <Link
+                        href={`/tests-services/${test.code.toLowerCase()}`}
+                        className="px-3 py-2 text-xs font-bold text-slate-600 hover:text-brand-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+                      >
+                        Details
+                      </Link>
+                      <button
+                        onClick={() => handleEnquireTest(test)}
+                        className="px-4 py-2 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs rounded-xl shadow transition-transform hover:scale-105"
+                      >
+                        Book Test →
+                      </button>
                     </div>
                   </div>
-
-                  <button
-                    onClick={() => handleEnquireTest(test)}
-                    className="px-4 py-2.5 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs rounded-xl shadow transition-transform hover:scale-105"
-                  >
-                    Book Test →
-                  </button>
                 </div>
 
               </div>
