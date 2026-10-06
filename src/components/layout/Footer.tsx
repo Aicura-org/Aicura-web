@@ -188,6 +188,15 @@ export default function Footer() {
 
               <li>
                 <Link
+                  href="/gallery"
+                  className="hover:text-yellow-400 transition-colors"
+                >
+                  Gallery
+                </Link>
+              </li>
+
+              <li>
+                <Link
                   href="/blog"
                   className="hover:text-yellow-400 transition-colors"
                 >

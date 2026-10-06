@@ -13,6 +13,7 @@ import {
   Bike,
   Building,
   Building2,
+  GalleryHorizontal,
   LogOut,
   ExternalLink,
   Menu,
@@ -81,6 +82,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Home Collection CMS', href: '/admin/home-collection', icon: Bike },
     { label: 'Packages CMS', href: '/admin/packages', icon: Package },
     { label: 'Campaigns CMS', href: '/admin/campaigns', icon: Megaphone },
+    { label: 'Gallery CMS', href: '/admin/gallery', icon: GalleryHorizontal },
     { label: 'Patient Enquiries', href: '/admin/enquiries', icon: CalendarCheck },
   ];
 
