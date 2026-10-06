@@ -326,7 +326,7 @@ async function main() {
     {
       patientName: 'Priya Mukherjee',
       location: 'Kolkata',
-      comment: 'Very competitive pricing for full body packages compared to other labs, and NABL accredited accuracy. Extremely satisfied!',
+      comment: 'Very competitive pricing for full body packages compared to other labs, and certified accuracy. Extremely satisfied!',
       rating: 5,
       avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=150',
       isFeatured: true,
@@ -360,8 +360,8 @@ async function main() {
       isActive: true,
     },
     {
-      question: 'Is AiCura Diagnostics lab NABL accredited?',
-      answer: 'Yes, all our diagnostic laboratories follow strict NABL quality standards and ISO certifications for 100% test accuracy.',
+      question: 'What quality standards does AiCura Diagnostics lab follow?',
+      answer: 'All our diagnostic laboratories follow strict quality standards and certifications ensuring 100% test accuracy.',
       displayOrder: 4,
       isActive: true,
     },
@@ -525,7 +525,7 @@ async function main() {
   const heroBannersData = [
     {
       title: 'Full Body Health Checkup - 60% OFF',
-      subtitle: 'Comprehensive 85-parameter health evaluation with NABL accredited lab reports & free doctor consultation.',
+      subtitle: 'Comprehensive 85-parameter health evaluation with certified lab reports & free doctor consultation.',
       badgeText: 'BEST VALUE PACKAGE',
       buttonText: 'Explore Packages',
       buttonLink: '/packages',
@@ -595,14 +595,14 @@ async function main() {
           'At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.',
         imageUrl:
           'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000',
-        badge1Title: 'NABL Standard',
+        badge1Title: 'Certified Standard',
         badge1Subtitle: 'Quality Assured Testing',
         badge2Title: '99.8% Precision',
         badge2Subtitle: 'Double Verified Results',
         badge3Text: '10,000+ Happy Patients',
         pillar1Title: 'Fully Automated Analyzers',
         pillar1Desc: 'Advanced robotic equipment ensuring error-free testing with rapid turnaround.',
-        pillar2Title: 'NABL & ISO Compliant',
+        pillar2Title: 'ISO Compliant & Certified',
         pillar2Desc: 'Standardized protocols matching the highest global benchmarks for diagnostic accuracy.',
         pillar3Title: 'MD Pathologist Verified',
         pillar3Desc: 'Every diagnostic report is validated by veteran senior pathologists.',

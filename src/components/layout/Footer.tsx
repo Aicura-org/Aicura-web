@@ -434,42 +434,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-4">
-
-          <div className="flex items-center gap-6">
-            <Link
-              href="/privacy"
-              className="hover:text-slate-200"
-            >
-              Privacy Policy
-            </Link>
-
-            <Link
-              href="/terms"
-              className="hover:text-slate-200"
-            >
-              Terms & Conditions
-            </Link>
-
-            <Link
-              href="/refund"
-              className="hover:text-slate-200"
-            >
-              Refund Policy
-            </Link>
-
-            <Link
-              href="/admin/login"
-              className="text-yellow-400 hover:underline font-medium"
-            >
-              Admin Portal
-            </Link>
-          </div>
-
+        <div className="pt-6 flex flex-col items-center justify-center text-center text-xs text-slate-400 gap-1.5">
           <p>
-            © {new Date().getFullYear()} AiCura Diagnostics. All rights reserved.
+            © 2026 AiCura Diagnostics. All rights reserved.
           </p>
-
+          <p className="text-slate-400">
+            Crafted by Ekodrix
+          </p>
         </div>
       </div>
     </footer>

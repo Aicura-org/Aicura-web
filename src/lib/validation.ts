@@ -137,3 +137,40 @@ export function validateCompanyDetailsInput(
   return errors;
 }
 
+export function validateDiagnosticTestInput(body: any, isUpdate = false): ApiErrorDetail[] {
+  const errors: ApiErrorDetail[] = [];
+
+  if (!isUpdate) {
+    if (!body.name || typeof body.name !== 'string' || body.name.trim().length === 0) {
+      errors.push({ field: 'name', message: 'Test name is required' });
+    }
+    if (!body.code || typeof body.code !== 'string' || body.code.trim().length === 0) {
+      errors.push({ field: 'code', message: 'Test code is required' });
+    }
+    if (!body.category || typeof body.category !== 'string' || body.category.trim().length === 0) {
+      errors.push({ field: 'category', message: 'Category is required' });
+    }
+    if (body.price === undefined || typeof Number(body.price) !== 'number' || Number(body.price) < 0) {
+      errors.push({ field: 'price', message: 'Valid test fee/price is required' });
+    }
+    if (!body.sampleType || typeof body.sampleType !== 'string' || body.sampleType.trim().length === 0) {
+      errors.push({ field: 'sampleType', message: 'Sample type is required (e.g. Blood, Urine)' });
+    }
+    if (!body.reportTurnaround || typeof body.reportTurnaround !== 'string' || body.reportTurnaround.trim().length === 0) {
+      errors.push({ field: 'reportTurnaround', message: 'Report turnaround time is required (e.g. 6-12 hours)' });
+    }
+  } else {
+    if (body.name !== undefined && (typeof body.name !== 'string' || body.name.trim().length === 0)) {
+      errors.push({ field: 'name', message: 'Test name cannot be empty' });
+    }
+    if (body.code !== undefined && (typeof body.code !== 'string' || body.code.trim().length === 0)) {
+      errors.push({ field: 'code', message: 'Test code cannot be empty' });
+    }
+    if (body.price !== undefined && (typeof Number(body.price) !== 'number' || Number(body.price) < 0)) {
+      errors.push({ field: 'price', message: 'Valid test price is required' });
+    }
+  }
+
+  return errors;
+}
+

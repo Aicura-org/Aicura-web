@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AiCura Diagnostics | Health Checkups & Home Sample Collection",
-  description: "NABL Compliant Lab with convenient home sample collection and personalized healthcare support.",
+  description: "Certified Diagnostic Lab with convenient home sample collection and personalized healthcare support.",
 };
 
 export default function RootLayout({

@@ -21,8 +21,8 @@ const faqs = [
   },
   {
     id: 'faq-4',
-    question: 'Is AiCura Diagnostics lab NABL accredited?',
-    answer: 'Yes, all our diagnostic laboratories follow strict NABL quality standards and ISO certifications for 100% test accuracy.',
+    question: 'What quality standards does AiCura Diagnostics lab follow?',
+    answer: 'All our diagnostic laboratories follow strict quality standards and certifications ensuring 100% test accuracy.',
   },
 ];
 

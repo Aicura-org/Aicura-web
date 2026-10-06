@@ -25,7 +25,7 @@ const defaultAbout: AboutData = {
     'At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.',
   imageUrl:
     'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000',
-  badge1Title: 'NABL Standard',
+  badge1Title: 'Certified Standard',
   badge1Subtitle: 'Quality Assured Testing',
   badge2Title: '99.8% Precision',
   badge2Subtitle: 'Double Verified Results',
@@ -234,7 +234,7 @@ export default function AboutPage() {
           <div className="absolute bottom-0 left-0 w-56 h-56 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none" />
           <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6 px-10 py-10">
             <div className="space-y-2 text-center sm:text-left">
-              <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest">NABL Accredited</p>
+              <p className="text-yellow-400 text-xs font-bold uppercase tracking-widest">Certified Laboratory</p>
               <h3 className="text-2xl font-extrabold text-white">Trusted by Thousands of Families</h3>
               <p className="text-slate-300 text-sm max-w-md">
                 Our lab operates under the highest national quality standards — so you and your family always get results you can count on.

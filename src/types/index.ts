@@ -270,3 +270,34 @@ export interface CreateCompanyDetailsInput {
 }
 
 export interface UpdateCompanyDetailsInput extends Partial<CreateCompanyDetailsInput> {}
+
+export interface DiagnosticTestItem {
+  id: string;
+  name: string;
+  code: string;
+  category: string;
+  price: number;
+  originalPrice?: number | null;
+  sampleType: string;
+  fastingRequired: boolean;
+  reportTurnaround: string;
+  description?: string | null;
+  isActive: boolean;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface CreateDiagnosticTestInput {
+  name: string;
+  code: string;
+  category: string;
+  price: number;
+  originalPrice?: number | null;
+  sampleType: string;
+  fastingRequired?: boolean;
+  reportTurnaround: string;
+  description?: string | null;
+  isActive?: boolean;
+}
+
+export interface UpdateDiagnosticTestInput extends Partial<CreateDiagnosticTestInput> {}

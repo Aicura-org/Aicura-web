@@ -1,14 +1,5 @@
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
+import PublicShell from '@/components/layout/PublicShell';
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <>
-      <Header />
-      <main className="flex-1">{children}</main>
-      <Footer />
-      <WhatsAppBtn />
-    </>
-  );
+  return <PublicShell>{children}</PublicShell>;
 }
