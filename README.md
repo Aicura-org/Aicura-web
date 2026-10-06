@@ -73,18 +73,6 @@ npx prisma migrate dev --name init
 npm run prisma:seed
 ```
 
----
-
-## 🔐 Default Admin Credentials
-
-After running `npm run prisma:seed`:
-
-- **Admin Login URL**: `http://localhost:3000/admin/login`
-- **Email**: `admin@aicuradiagnostics.com`
-- **Password**: `admin123`
-
----
-
 ## 📡 RESTful API Endpoint Reference
 
 | Method | Endpoint | Description | Auth Required |
