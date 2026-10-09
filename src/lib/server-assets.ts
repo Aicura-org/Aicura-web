@@ -9,7 +9,7 @@ export function syncCampaignAssets() {
     const assetsToSync = [
       {
         srcNames: ['senior_couple_hero_1791291769977.jpg', 'media_1791286709370.png'],
-        destName: 'senior-couple.jpg',
+        destName: 'senior-couple.webp',
       },
     ];
 

@@ -62,7 +62,7 @@ export default function AdminCampaignsPage() {
   const [discount, setDiscount] = useState('58% OFF');
   const [ctaText, setCtaText] = useState('Book Senior Health Package');
   const [ctaLink, setCtaLink] = useState('#campaign-enquiry-card');
-  const [heroImageUrl, setHeroImageUrl] = useState('/senior-couple.jpg');
+  const [heroImageUrl, setHeroImageUrl] = useState('/senior-couple.webp');
   const [seoTitle, setSeoTitle] = useState('');
   const [seoDescription, setSeoDescription] = useState('');
   const [isActive, setIsActive] = useState(true);
@@ -284,7 +284,7 @@ export default function AdminCampaignsPage() {
     setDiscount('58% OFF');
     setCtaText('Book Senior Health Package');
     setCtaLink('#campaign-enquiry-card');
-    setHeroImageUrl('/senior-couple.jpg');
+    setHeroImageUrl('/senior-couple.webp');
     setSeoTitle('');
     setSeoDescription('');
     setIsActive(true);

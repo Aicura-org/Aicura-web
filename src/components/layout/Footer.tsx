@@ -58,7 +58,7 @@ export default function Footer() {
           <div className="lg:col-span-2 space-y-1">
             <Link href="/" className="flex items-center">
               <img
-                src="/logo.png"
+                src="/logo.webp"
                 alt="AiCura Diagnostics"
                 className="h-20 sm:h-24 w-auto object-contain hover:scale-105 transition-transform"
               />

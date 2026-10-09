@@ -95,12 +95,8 @@ export function CampaignFinalCta({ title, data }: CampaignFinalCtaProps) {
                 {/* Photo frame */}
                 <div className="rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg aspect-[4/3] bg-emerald-950">
                   <img
-                    src="/senior-couple.jpg"
+                    src="/senior-couple.webp"
                     alt="Senior Health Diagnostic Care"
-                    onError={(e) => {
-                      (e.currentTarget as HTMLImageElement).src =
-                        '/api/campaign-assets/senior_couple_hero_1791291769977.jpg';
-                    }}
                     className="w-full h-full object-cover object-center"
                   />
                 </div>

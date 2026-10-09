@@ -25,7 +25,7 @@ export default async function CampaignsListingPage() {
       {/* 1. Page Header Banner matching website theme */}
       <section className="relative w-full h-[40vh] min-h-[260px] bg-white border-b border-slate-200 shadow-sm overflow-hidden flex items-center">
         <Image
-          src="/Modern Clinic Blood Pressure Check.png"
+          src="/campaigns-packages-banner.webp"
           alt="Active Health Campaigns - AiCura Diagnostics"
           fill
           priority
@@ -37,7 +37,7 @@ export default async function CampaignsListingPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
             <div className="max-w-2xl space-y-3 text-left">
               <span className="inline-flex items-center gap-1.5 text-slate-950 bg-[#f5b324] font-extrabold text-xs uppercase tracking-wider px-3.5 py-1 rounded-full shadow-sm">
-                <Sparkles className="w-3.5 h-3.5 text-slate-950" /> Special Promotional Drives
+                Special Promotional Drives
               </span>
               <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
                 Active Health Campaigns
@@ -76,7 +76,7 @@ export default async function CampaignsListingPage() {
               const cardImage =
                 campaign.heroImageUrl && !campaign.heroImageUrl.includes('unsplash')
                   ? campaign.heroImageUrl
-                  : '/senior-couple.jpg';
+                  : '/senior-couple.webp';
 
               return (
                 <div
