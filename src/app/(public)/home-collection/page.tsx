@@ -337,13 +337,13 @@ export default function HomeCollectionPage() {
               </div>
             </div>
 
-            {/* NABL trust strip */}
+            {/* Quality trust strip */}
             <div className="bg-brand-50 border border-brand-100 rounded-2xl px-5 py-4 flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-brand-700 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-xs font-bold text-brand-800">NABL Accredited Laboratory</p>
+                <p className="text-xs font-bold text-brand-800">Certified Diagnostic Laboratory</p>
                 <p className="text-[11px] text-brand-600 mt-0.5">99.8% accuracy · ISO certified · Trusted since 2018</p>
               </div>
             </div>

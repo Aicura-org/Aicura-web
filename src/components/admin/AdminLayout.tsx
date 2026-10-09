@@ -7,6 +7,7 @@ import {
   ShieldCheck,
   LayoutDashboard,
   Package,
+  FlaskConical,
   CalendarCheck,
   Megaphone,
   Sparkles,
@@ -19,6 +20,7 @@ import {
   Menu,
   X,
   Loader2,
+  HelpCircle,
 } from 'lucide-react';
 import { AdminUserProfile } from '@/types';
 
@@ -81,7 +83,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'About Us CMS', href: '/admin/about', icon: Building },
     { label: 'Home Collection CMS', href: '/admin/home-collection', icon: Bike },
     { label: 'Packages CMS', href: '/admin/packages', icon: Package },
+    { label: 'Tests & Services CMS', href: '/admin/tests', icon: FlaskConical },
     { label: 'Campaigns CMS', href: '/admin/campaigns', icon: Megaphone },
+    { label: 'Campaign FAQs', href: '/admin/faqs', icon: HelpCircle },
     { label: 'Gallery CMS', href: '/admin/gallery', icon: GalleryHorizontal },
     { label: 'Patient Enquiries', href: '/admin/enquiries', icon: CalendarCheck },
   ];

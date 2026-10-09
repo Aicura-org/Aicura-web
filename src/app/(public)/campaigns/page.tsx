@@ -2,268 +2,169 @@ import React from 'react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
+import { ArrowRight, CheckCircle2, Megaphone, Sparkles, Tag, ShieldCheck, Clock } from 'lucide-react';
 import { CampaignService } from '@/services/campaign.service';
-import {
-  Megaphone, Calendar, ArrowRight,
-  ShieldCheck, CheckCircle2, Clock,
-  Phone, Package, Activity, Award, BadgeCheck,
-} from 'lucide-react';
+import { parseCampaignContent } from '@/lib/campaign-helper';
+import { syncCampaignAssets } from '@/lib/server-assets';
 
-export const revalidate = 60;
+export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: 'Special Health Campaigns & Drives | AiCura Diagnostics',
+  title: 'Active Health Campaigns & Offers | AiCura Diagnostics',
   description:
-    'Explore our special diagnostic campaigns, seasonal health checkup drives, and limited-time wellness packages at AiCura Diagnostics.',
+    'Discover limited-time diagnostic campaigns, preventive wellness drives, and health packages with doorstep sample collection.',
 };
 
-const alwaysOnServices = [
-  {
-    icon: ShieldCheck,
-    color: 'bg-emerald-100 text-emerald-700',
-    title: 'NABL Accredited Accuracy',
-    desc: 'Advanced lab equipment ensuring 99.9% accurate and reliable test parameters.',
-  },
-  {
-    icon: Activity,
-    color: 'bg-yellow-100 text-yellow-700',
-    title: 'Doorstep Home Collection',
-    desc: 'Certified phlebotomists collect samples safely at your preferred date & time.',
-  },
-  {
-    icon: Award,
-    color: 'bg-brand-100 text-brand-700',
-    title: 'Same-Day Digital Reports',
-    desc: 'Receive verified digital reports directly on your WhatsApp and email within 24 hours.',
-  },
-];
+export default async function CampaignsListingPage() {
+  syncCampaignAssets();
 
-export default async function CampaignsPage() {
   const campaigns = await CampaignService.listCampaigns({ isActive: true }).catch(() => []);
 
   return (
-    <div className="min-h-screen bg-[#f8faf9] font-sans text-slate-800 flex flex-col">
-      <main className="flex-1 pb-16">
-
-        {/* ── Hero Banner ── */}
-        <section className="relative w-full h-[340px] sm:h-[440px] overflow-hidden">
-          <Image
-            src="/Modern Healthcare campaign page.png"
-            alt="AiCura Health Campaigns & Diagnostic Drives"
-            fill priority sizes="100vw"
-            className="object-cover object-center"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-900/80 via-brand-900/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-900/40 via-transparent to-transparent" />
-          <div className="absolute inset-0 flex items-center">
-            <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full">
-              <div className="max-w-lg space-y-4">
-                <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest bg-yellow-400 text-brand-900 px-3 py-1.5 rounded-full shadow">
-                  <Megaphone className="w-3.5 h-3.5" /> Exclusive Diagnostic Initiatives
-                </span>
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-white leading-tight drop-shadow-lg">
-                  Health &amp; Diagnostic<br />
-                  <span className="text-yellow-400">Campaigns</span>
-                </h1>
-                <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
-                  Take proactive control of your wellness with seasonal screening drives, special diagnostic packages, and community health initiatives.
-                </p>
-              </div>
+    <div className="min-h-screen flex flex-col bg-slate-50">
+      {/* 1. Page Header Banner matching website theme */}
+      <section className="relative w-full h-[40vh] min-h-[260px] bg-white border-b border-slate-200 shadow-sm overflow-hidden flex items-center">
+        <Image
+          src="/Modern Clinic Blood Pressure Check.png"
+          alt="Active Health Campaigns - AiCura Diagnostics"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center w-full h-full"
+        />
+        {/* Dark overlay for contrast */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/30 flex items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-2xl space-y-3 text-left">
+              <span className="inline-flex items-center gap-1.5 text-slate-950 bg-[#f5b324] font-extrabold text-xs uppercase tracking-wider px-3.5 py-1 rounded-full shadow-sm">
+                <Sparkles className="w-3.5 h-3.5 text-slate-950" /> Special Promotional Drives
+              </span>
+              <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
+                Active Health Campaigns
+              </h1>
+              <p className="text-slate-200 text-sm sm:text-base font-normal max-w-xl leading-relaxed">
+                Take charge of your wellness with our specialized diagnostic checkup campaigns. Expert certified testing, transparent reports, and doorstep sample collection.
+              </p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── Content ── */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          {campaigns.length > 0 ? (
-            /* ── Active Campaigns Grid ── */
-            <div className="space-y-8">
-              {/* toolbar */}
-              <div className="flex items-center justify-between bg-white px-5 py-3.5 rounded-2xl border border-slate-100 shadow-sm">
-                <p className="text-xs font-bold text-slate-700 flex items-center gap-2">
-                  <Megaphone className="w-4 h-4 text-yellow-500" />
-                  Showing <span className="text-brand-700 font-extrabold">{campaigns.length}</span> active campaign{campaigns.length > 1 ? 's' : ''}
-                </p>
-                <span className="text-[11px] text-emerald-700 font-semibold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Live Offers
-                </span>
-              </div>
+      {/* 2. Main Campaigns Listing */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 flex-1 w-full">
+        {campaigns.length === 0 ? (
+          <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center max-w-lg mx-auto shadow-sm space-y-4">
+            <div className="w-14 h-14 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center mx-auto">
+              <Megaphone className="w-7 h-7" />
+            </div>
+            <h3 className="text-lg font-bold text-slate-900">No Active Campaigns Right Now</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              We update our special diagnostic campaigns regularly. In the meantime, explore our full catalog of health checkup packages.
+            </p>
+            <Link
+              href="/packages"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-700 text-white font-bold text-xs rounded-xl hover:bg-brand-800 transition-colors"
+            >
+              <span>Explore Health Packages</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {campaigns.map((campaign) => {
+              const parsed = parseCampaignContent(campaign);
+              const cardImage =
+                campaign.heroImageUrl && !campaign.heroImageUrl.includes('unsplash')
+                  ? campaign.heroImageUrl
+                  : '/senior-couple.jpg';
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {campaigns.map((camp) => (
-                  <div
-                    key={camp.id}
-                    className="bg-white rounded-3xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group hover:-translate-y-1"
-                  >
-                    {/* image or fallback */}
-                    <div className="relative">
-                      {camp.heroImageUrl ? (
-                        <div className="h-48 w-full overflow-hidden bg-slate-100">
-                          <img
-                            src={camp.heroImageUrl}
-                            alt={camp.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        </div>
-                      ) : (
-                        <div className="h-36 bg-brand-800 flex items-end p-5 relative overflow-hidden">
-                          <div className="absolute right-4 bottom-2 opacity-10">
-                            <Megaphone className="w-28 h-28" />
-                          </div>
-                          <span className="text-[10px] font-bold tracking-widest uppercase text-yellow-400 bg-brand-900/60 px-2.5 py-1 rounded-full z-10">
-                            Special Drive
+              return (
+                <div
+                  key={campaign.id}
+                  className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between overflow-hidden group hover:-translate-y-1"
+                >
+                  <div>
+                    {/* Campaign Image */}
+                    <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                      <Image
+                        src={cardImage}
+                        alt={campaign.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+                      {/* Badge */}
+                      <div className="absolute top-3 left-3">
+                        <span className="inline-flex items-center gap-1 bg-white/95 backdrop-blur-xs text-teal-900 font-extrabold text-[11px] px-3 py-1 rounded-full shadow-sm">
+                          <Tag className="w-3 h-3 text-teal-700" />
+                          <span>{parsed.badgeText || campaign.name}</span>
+                        </span>
+                      </div>
+
+                      {/* Discount Tag */}
+                      {parsed.discount && (
+                        <div className="absolute top-3 right-3">
+                          <span className="bg-[#f5b324] text-slate-950 font-black text-xs px-2.5 py-1 rounded-lg shadow-sm">
+                            {parsed.discount}
                           </span>
                         </div>
                       )}
-                      <div className="absolute top-3 right-3">
-                        <span className="text-[10px] font-bold bg-emerald-500 text-white px-2.5 py-1 rounded-full shadow-md flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> Active
-                        </span>
-                      </div>
                     </div>
 
-                    {/* body */}
-                    <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                      <div className="space-y-2">
-                        <span className="text-[11px] font-bold text-brand-700 bg-brand-50 border border-brand-100 px-2.5 py-1 rounded-md inline-block">
-                          {camp.name}
-                        </span>
-                        <h2 className="text-base font-bold text-slate-900 group-hover:text-brand-700 transition-colors line-clamp-2">
-                          {camp.title}
-                        </h2>
-                        {camp.subtitle && (
-                          <p className="text-xs font-medium text-emerald-700 line-clamp-2">{camp.subtitle}</p>
-                        )}
-                        {camp.description && (
-                          <p className="text-xs text-slate-500 line-clamp-3 leading-relaxed">{camp.description}</p>
-                        )}
-                      </div>
+                    {/* Content Body */}
+                    <div className="p-6 space-y-3.5">
+                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-800 transition-colors leading-snug line-clamp-2">
+                        {campaign.title}
+                      </h3>
 
-                      <div className="space-y-3 pt-3 border-t border-slate-100">
-                        <div className="grid grid-cols-2 gap-2 text-[11px] text-slate-500 font-medium">
-                          <div className="flex items-center gap-1.5">
-                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            <span>Home Collection</span>
-                          </div>
-                          <div className="flex items-center gap-1.5">
-                            <Clock className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                            <span>Fast Reports</span>
-                          </div>
+                      <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">
+                        {parsed.overview || campaign.subtitle || 'Special diagnostic checkup with comprehensive testing and home collection.'}
+                      </p>
+
+                      {/* Highlights */}
+                      {parsed.highlights.length > 0 && (
+                        <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                          {parsed.highlights.slice(0, 3).map((item, idx) => (
+                            <div key={idx} className="flex items-center gap-2 text-xs text-slate-700">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                              <span className="truncate">{item}</span>
+                            </div>
+                          ))}
                         </div>
-                        <Link
-                          href={`/campaign/${camp.slug}`}
-                          className="w-full py-2.5 px-4 rounded-xl gold-gradient text-brand-900 font-bold text-xs shadow hover:shadow-md flex items-center justify-center gap-2 group-hover:scale-[1.02] transition-transform"
-                        >
-                          <span>{camp.ctaText || 'View Campaign & Claim'}</span>
-                          <ArrowRight className="w-3.5 h-3.5" />
-                        </Link>
-                      </div>
+                      )}
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            /* ── Empty State ── */
-            <div className="space-y-14">
 
-              {/* empty card */}
-              <div className="bg-white rounded-3xl border border-slate-100 shadow-xl p-10 sm:p-16 text-center max-w-2xl mx-auto space-y-7 relative overflow-hidden">
-                <div className="absolute -top-20 -right-20 w-56 h-56 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute -bottom-20 -left-20 w-56 h-56 bg-brand-700/10 rounded-full blur-3xl pointer-events-none" />
+                  {/* Footer & CTA */}
+                  <div className="p-6 pt-0 border-t border-slate-100 flex items-center justify-between gap-3 mt-auto">
+                    {/* Price */}
+                    <div>
+                      {parsed.originalPrice && (
+                        <span className="text-[11px] text-slate-400 line-through block">
+                          ₹{parsed.originalPrice.toLocaleString('en-IN')}
+                        </span>
+                      )}
+                      <span className="text-xl font-black text-slate-900">
+                        ₹{parsed.price.toLocaleString('en-IN')}
+                      </span>
+                    </div>
 
-                {/* icon */}
-                <div className="w-20 h-20 mx-auto rounded-3xl bg-brand-800 flex items-center justify-center shadow-xl border-2 border-yellow-400/40 relative">
-                  <Megaphone className="w-10 h-10 text-yellow-400" />
-                  <span className="absolute -top-1 -right-1 flex h-4 w-4">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-4 w-4 bg-yellow-500" />
-                  </span>
-                </div>
-
-                <div className="space-y-2 max-w-md mx-auto">
-                  <span className="inline-block px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-wider">
-                    Upcoming Seasonal Drives
-                  </span>
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                    No Active Campaigns Right Now
-                  </h2>
-                  <p className="text-slate-500 text-sm leading-relaxed">
-                    We regularly launch specialized health screening drives, seasonal wellness initiatives, and family diagnostic packages. Our next drive will be announced here shortly!
-                  </p>
-                </div>
-
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                  <Link
-                    href="/packages"
-                    className="w-full sm:w-auto px-6 py-3 rounded-full gold-gradient text-brand-900 font-bold text-sm shadow-md hover:shadow-lg transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
-                  >
-                    <Package className="w-4 h-4" /> Explore Health Packages
-                  </Link>
-                  <Link
-                    href="/home-collection"
-                    className="w-full sm:w-auto px-6 py-3 rounded-full bg-brand-800 hover:bg-brand-700 text-white font-bold text-sm shadow transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Calendar className="w-4 h-4 text-yellow-400" /> Book Home Collection
-                  </Link>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-400">
-                  <span>Need custom health checkup inquiries?</span>
-                  <a href="tel:+919946284615" className="font-bold text-brand-700 hover:text-brand-900 flex items-center gap-1">
-                    <Phone className="w-3.5 h-3.5 text-yellow-500" /> +91 99462 84615
-                  </a>
-                </div>
-              </div>
-
-              {/* always-on services */}
-              <div>
-                <div className="text-center mb-8 space-y-2">
-                  <span className="inline-block text-xs font-bold text-brand-700 uppercase tracking-wider bg-brand-50 border border-brand-100 px-3 py-1 rounded-full">
-                    Always Available
-                  </span>
-                  <h3 className="text-2xl font-extrabold text-slate-900">Diagnostic Services All Year Round</h3>
-                  <p className="text-sm text-slate-500">Even when special drives are inactive, you get our top-tier services.</p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  {alwaysOnServices.map(({ icon: Icon, color, title, desc }) => (
-                    <div
-                      key={title}
-                      className="bg-white p-7 rounded-3xl border border-slate-100 shadow-sm hover:shadow-lg transition-all duration-300 space-y-3 text-center group hover:-translate-y-1"
+                    {/* View Campaign CTA */}
+                    <Link
+                      href={`/campaigns/${campaign.slug}`}
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-700 hover:bg-brand-800 active:bg-brand-900 text-yellow-400 font-extrabold text-xs rounded-xl shadow-xs transition-all group-hover:scale-102"
                     >
-                      <div className={`w-12 h-12 mx-auto rounded-2xl ${color} flex items-center justify-center`}>
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <h4 className="text-sm font-bold text-slate-900">{title}</h4>
-                      <p className="text-xs text-slate-500 leading-relaxed">{desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* helpline banner */}
-              <div className="relative bg-brand-800 rounded-3xl overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-brand-700/50 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-48 h-48 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6 px-10 py-8">
-                  <div className="space-y-1 text-center sm:text-left">
-                    <p className="text-yellow-400 text-[11px] font-bold uppercase tracking-widest">NABL Accredited Lab</p>
-                    <h3 className="text-xl font-extrabold text-white">Questions? We&apos;re Here to Help</h3>
-                    <p className="text-slate-300 text-sm">Talk to our health experts about the right tests for your family.</p>
+                      <span>View Offer</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                   </div>
-                  <a
-                    href="tel:+919946284615"
-                    className="shrink-0 flex items-center gap-2.5 bg-yellow-400 hover:bg-yellow-300 text-brand-900 font-bold text-sm px-6 py-3 rounded-full shadow-lg transition-all hover:scale-105"
-                  >
-                    <Phone className="w-4 h-4" /> +91 99462 84615
-                  </a>
                 </div>
-              </div>
-
-            </div>
-          )}
-        </section>
+              );
+            })}
+          </div>
+        )}
       </main>
     </div>
   );

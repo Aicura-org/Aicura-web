@@ -54,7 +54,7 @@ const defaultAbout = {
     'At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.',
   imageUrl:
     'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000',
-  badge1Title: 'NABL Standard',
+  badge1Title: 'Quality Standard',
   badge1Subtitle: 'Quality Assured Testing',
   badge2Title: '99.8% Precision',
   badge2Subtitle: 'Double Verified Results',
@@ -63,7 +63,7 @@ const defaultAbout = {
   badge3Subtitle: '10k+ Patients Served',
   pillar1Title: 'Fully Automated Analyzers',
   pillar1Desc: 'Advanced robotic equipment ensuring error-free testing with rapid turnaround.',
-  pillar2Title: 'NABL & ISO Compliant',
+  pillar2Title: 'ISO Compliant & Certified',
   pillar2Desc: 'Standardized protocols matching the highest global benchmarks for diagnostic accuracy.',
   pillar3Title: 'MD Pathologist Verified',
   pillar3Desc: 'Every diagnostic report is validated by veteran senior pathologists.',
