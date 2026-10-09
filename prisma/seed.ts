@@ -12,7 +12,7 @@ async function main() {
   console.log('🌱 Starting database seed...');
 
   // 1. Admin User
-  const adminPasswordHash = await bcrypt.hash('admin123', 10);
+  const adminPasswordHash = await bcrypt.hash('Aicura@2620!', 10);
   const adminUser = await prisma.adminUser.upsert({
     where: { email: 'admin@aicuradiagnostics.com' },
     update: {
