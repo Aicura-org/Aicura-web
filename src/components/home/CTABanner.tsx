@@ -17,7 +17,7 @@ export default function CTABanner() {
           <div
             className="relative rounded-3xl overflow-hidden shadow-2xl min-h-[360px] sm:min-h-[400px] bg-cover bg-center lg:bg-[center_right]"
             style={{
-              backgroundImage: "url('/Modern Clinic Cta Banner.png')",
+              backgroundImage: "url('/cta-banner.webp')",
             }}
           >
 

@@ -137,7 +137,7 @@ export default function Header() {
               {/* Logo */}
               <Link href="/" className="flex items-center group">
                 <img
-                  src="/logo.png"
+                  src="/logo.webp"
                   alt="AiCura Diagnostics"
                   className="h-9 sm:h-12 w-auto object-contain group-hover:scale-105 transition-transform"
                 />
@@ -225,13 +225,6 @@ export default function Header() {
                   <Phone className="w-4 h-4 text-yellow-400" />
                   +91 99462 84615 (7 AM - 8 PM)
                 </a>
-                <Link
-                  href="/admin/login"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="px-4 py-2 text-xs text-emerald-300 hover:text-white text-center font-medium"
-                >
-                  Staff / Admin Portal Login →
-                </Link>
               </div>
             </div>
           )}

@@ -23,7 +23,7 @@ const FALLBACK_CAMPAIGN: CampaignItem = {
   title: 'Comprehensive Senior Health Checkup',
   subtitle: 'Stay healthy. Stay active. A complete health assessment designed for senior citizens.',
   description: '',
-  heroImageUrl: '/senior-couple.jpg',
+  heroImageUrl: '/senior-couple.webp',
   ctaText: 'Book Senior Health Package',
   ctaLink: '#campaign-enquiry-card',
   seoTitle: 'Comprehensive Senior Health Checkup | AiCura Diagnostics',

@@ -58,9 +58,9 @@ const defaultAbout = {
   badge1Subtitle: 'Quality Assured Testing',
   badge2Title: '99.8% Precision',
   badge2Subtitle: 'Double Verified Results',
-  badge3Text: '10,000+ Happy Patients',
+  badge3Text: '',
   badge3Title: 'Happy Clients',
-  badge3Subtitle: '10k+ Patients Served',
+  badge3Subtitle: 'Quality Assured Testing',
   pillar1Title: 'Fully Automated Analyzers',
   pillar1Desc: 'Advanced robotic equipment ensuring error-free testing with rapid turnaround.',
   pillar2Title: 'ISO Compliant & Certified',
@@ -102,9 +102,15 @@ export default function DoorstepCare({ initialData }: DoorstepCareProps) {
   const badge1Subtitle = about.badge1Subtitle || defaultAbout.badge1Subtitle;
   const badge2Title = about.badge2Title || defaultAbout.badge2Title;
   const badge2Subtitle = about.badge2Subtitle || defaultAbout.badge2Subtitle;
-  const badge3Title = (about as AboutSectionData).badge3Title || defaultAbout.badge3Title;
+  const badge3Parts = (about.badge3Text || defaultAbout.badge3Text || '').trim().split(/\s+/);
+  const badge3Title =
+    badge3Parts.length > 1
+      ? badge3Parts.slice(1).join(' ')
+      : (about as AboutSectionData).badge3Title || defaultAbout.badge3Title;
   const badge3Subtitle =
-    (about as AboutSectionData).badge3Subtitle || defaultAbout.badge3Subtitle;
+    badge3Parts.length > 1
+      ? `${badge3Parts[0]} Served`
+      : (about as AboutSectionData).badge3Subtitle || defaultAbout.badge3Subtitle;
 
   const pillars = [
     {

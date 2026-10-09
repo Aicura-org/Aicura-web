@@ -28,10 +28,10 @@ export default function WhyAiCura() {
   ];
 
   const stats = [
-    { value: '10,000+', label: 'Happy Customers', icon: Users, tile: 'bg-emerald-50', iconBox: 'bg-emerald-100 text-emerald-700' },
+    { value: '1000+', label: 'Happy Customers', icon: Users, tile: 'bg-emerald-50', iconBox: 'bg-emerald-100 text-emerald-700' },
     { value: '500+', label: 'Tests Available', icon: Activity, tile: 'bg-sky-50', iconBox: 'bg-sky-100 text-sky-700' },
-    { value: '5+', label: 'Years of Service', icon: Award, tile: 'bg-amber-50', iconBox: 'bg-amber-100 text-amber-700' },
-    { value: '20+', label: 'Collection Locations', icon: MapPin, tile: 'bg-rose-50', iconBox: 'bg-rose-100 text-rose-700' },
+    { value: '2', label: 'Years of Service', icon: Award, tile: 'bg-amber-50', iconBox: 'bg-amber-100 text-amber-700' },
+    { value: '2+', label: 'Collection Locations', icon: MapPin, tile: 'bg-rose-50', iconBox: 'bg-rose-100 text-rose-700' },
   ];
 
   return (

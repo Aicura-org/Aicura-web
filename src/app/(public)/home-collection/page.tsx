@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import {
-  CheckCircle2, Upload, Loader2,
+  CheckCircle2, Loader2,
   Clock, MapPin, FlaskConical, CalendarDays,
   Syringe, Thermometer, FileText, Star,
   User, Phone, Home, TestTube, Calendar, ChevronDown,
@@ -30,31 +30,9 @@ export default function HomeCollectionPage() {
   const [testRequired, setTestRequired] = useState('');
   const [preferredDate, setPreferredDate] = useState('');
   const [preferredTime, setPreferredTime] = useState('07:00 AM - 09:00 AM');
-  const [prescriptionFile, setPrescriptionFile] = useState<File | null>(null);
-  const [prescriptionUrl, setPrescriptionUrl] = useState('');
-  const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [bookingId, setBookingId] = useState('');
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !e.target.files[0]) return;
-    const file = e.target.files[0];
-    setPrescriptionFile(file);
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('category', 'prescription');
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await res.json();
-      if (data.success && data.data?.url) setPrescriptionUrl(data.data.url);
-    } catch (err) {
-      console.error('Prescription upload failed:', err);
-    } finally {
-      setUploading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +47,6 @@ export default function HomeCollectionPage() {
           fullName, phone, address,
           message: testRequired ? `Requested Test/Package: ${testRequired}` : 'Home Sample Collection Booking',
           preferredDate, preferredTime,
-          prescriptionUrl: prescriptionUrl || undefined,
         }),
       });
       const data = await res.json();
@@ -90,7 +67,7 @@ export default function HomeCollectionPage() {
       {/* ── Hero Banner ── */}
       <section className="relative w-full h-[340px] sm:h-[440px] overflow-hidden">
         <Image
-          src="/Home Blood Draw in a Bright Living Room.png"
+          src="/home-blood-draw.webp"
           alt="Home Sample Collection — AiCura Diagnostics"
           fill priority sizes="100vw"
           className="object-cover object-center"
@@ -188,7 +165,7 @@ export default function HomeCollectionPage() {
                             <User className="w-3 h-3 text-brand-700" /> Full Name *
                           </label>
                           <input
-                            type="text" required placeholder="e.g. Anjali Nair"
+                            type="text" required placeholder="e.g. Madhavan Pillai"
                             value={fullName} onChange={(e) => setFullName(e.target.value)}
                             className="w-full px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-700 focus:border-transparent focus:bg-white transition"
                           />
@@ -261,29 +238,10 @@ export default function HomeCollectionPage() {
                         </div>
                       </div>
 
-                      {/* Prescription upload */}
-                      <div className="space-y-1">
-                        <label className="text-[11px] font-semibold text-slate-500">Upload Prescription <span className="text-slate-400 font-normal">(Optional)</span></label>
-                        <div className="relative border-2 border-dashed border-slate-200 rounded-lg px-4 py-3 bg-slate-50 hover:bg-brand-50 hover:border-brand-300 transition-all cursor-pointer group">
-                          <input
-                            type="file" accept="image/*,.pdf" onChange={handleFileUpload}
-                            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                          />
-                          <div className="flex items-center gap-3">
-                            <div className="w-7 h-7 rounded-lg bg-brand-100 flex items-center justify-center shrink-0 group-hover:bg-brand-200 transition-colors">
-                              <Upload className="w-3.5 h-3.5 text-brand-700" />
-                            </div>
-                            <p className="text-xs text-slate-600">
-                              {uploading ? 'Uploading...' : prescriptionFile ? prescriptionFile.name : 'Click to upload Doctor Prescription (Image / PDF)'}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
                       {/* Submit */}
                       <button
                         type="submit"
-                        disabled={submitting || uploading}
+                        disabled={submitting}
                         className="w-full py-3 rounded-xl gold-gradient text-brand-900 font-bold text-sm shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:scale-100"
                       >
                         {submitting ? (

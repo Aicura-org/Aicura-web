@@ -50,7 +50,7 @@ export default function PackagesPage() {
       {/* Banner */}
       <section className="relative w-full h-[50vh] min-h-[250px] bg-white border-b border-slate-200 shadow-sm overflow-hidden flex items-center">
         <Image
-          src="/Modern Clinic Blood Pressure Check.png"
+          src="/campaigns-packages-banner.webp"
           alt="Comprehensive Health Packages - AiCura Diagnostics"
           fill
           priority

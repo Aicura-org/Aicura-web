@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import WhatsAppBtn from '@/components/layout/WhatsAppBtn';
+import HomeCollectionFloatingBtn from '@/components/layout/HomeCollectionFloatingBtn';
 
 export default function PublicShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -22,6 +23,7 @@ export default function PublicShell({ children }: { children: React.ReactNode })
       <main className="flex-1">{children}</main>
       <Footer />
       <WhatsAppBtn />
+      <HomeCollectionFloatingBtn />
     </>
   );
 }

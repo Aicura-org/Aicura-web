@@ -599,7 +599,7 @@ async function main() {
         badge1Subtitle: 'Quality Assured Testing',
         badge2Title: '99.8% Precision',
         badge2Subtitle: 'Double Verified Results',
-        badge3Text: '10,000+ Happy Patients',
+        badge3Text: '1000+ Happy Patients',
         pillar1Title: 'Fully Automated Analyzers',
         pillar1Desc: 'Advanced robotic equipment ensuring error-free testing with rapid turnaround.',
         pillar2Title: 'ISO Compliant & Certified',

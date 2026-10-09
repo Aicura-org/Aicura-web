@@ -35,7 +35,7 @@ export function CampaignLandingHero({ campaign, data }: Props) {
   const heroImageSrc =
     campaign.heroImageUrl && !campaign.heroImageUrl.includes('unsplash')
       ? campaign.heroImageUrl
-      : '/senior-couple.jpg';
+      : '/senior-couple.webp';
 
   const displayTitle =
     !campaign.title || campaign.title === 'Empower Senior Health with Tailored Diagnostics'

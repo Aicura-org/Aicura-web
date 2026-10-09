@@ -114,7 +114,7 @@ export function CampaignHowItWorks() {
               {/* Photo Frame */}
               <div className="rounded-3xl overflow-hidden shadow-sm aspect-[4/3] bg-slate-100">
                 <img
-                  src="/Home Blood Draw in a Bright Living Room.png"
+                  src="/home-blood-draw.webp"
                   alt="Safe. Simple. At Home Sample Collection"
                   className="w-full h-full object-cover object-center"
                 />

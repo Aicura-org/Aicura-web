@@ -1,43 +1,15 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { ShieldCheck, Award, Heart, Users, Microchip, Star, BadgeCheck, TrendingUp } from 'lucide-react';
+import { prisma } from '@/lib/prisma';
 
-interface AboutData {
-  badgeText: string;
-  titlePrefix: string;
-  titleHighlight: string;
-  description: string;
-  imageUrl: string;
-  badge1Title: string;
-  badge1Subtitle: string;
-  badge2Title: string;
-  badge2Subtitle: string;
-  badge3Text: string;
-}
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-const defaultAbout: AboutData = {
-  badgeText: 'About AiCura Diagnostics',
-  titlePrefix: 'Pioneering Clinical Precision &',
-  titleHighlight: 'Trusted Healthcare.',
-  description:
-    'At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.',
-  imageUrl:
-    'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000',
-  badge1Title: 'Certified Standard',
-  badge1Subtitle: 'Quality Assured Testing',
-  badge2Title: '99.8% Precision',
-  badge2Subtitle: 'Double Verified Results',
-  badge3Text: '10,000+ Happy Patients',
+export const metadata = {
+  title: 'About Us | AiCura Diagnostics',
+  description: 'Pioneering Clinical Precision & Trusted Healthcare.',
 };
-
-const stats = [
-  { value: '10,000+', label: 'Happy Patients' },
-  { value: '99.8%', label: 'Report Accuracy' },
-  { value: '500+', label: 'Tests Available' },
-  { value: '6–24h', label: 'Report Delivery' },
-];
 
 const values = [
   {
@@ -57,36 +29,50 @@ const values = [
   },
 ];
 
-export default function AboutPage() {
-  const [about, setAbout] = useState<AboutData>(defaultAbout);
+async function getAboutData() {
+  try {
+    const about = await prisma.aboutSection.findFirst({
+      where: { isActive: true },
+      orderBy: { updatedAt: 'desc' },
+    });
+    return about;
+  } catch (error) {
+    console.error('Failed fetching about section server-side:', error);
+    return null;
+  }
+}
 
-  useEffect(() => {
-    async function loadAbout() {
-      try {
-        const res = await fetch('/api/about');
-        if (res.ok) {
-          const json = await res.json();
-          if (json.success && json.data) {
-            setAbout({
-              badgeText: json.data.badgeText || defaultAbout.badgeText,
-              titlePrefix: json.data.titlePrefix || defaultAbout.titlePrefix,
-              titleHighlight: json.data.titleHighlight || defaultAbout.titleHighlight,
-              description: json.data.description || defaultAbout.description,
-              imageUrl: json.data.imageUrl || defaultAbout.imageUrl,
-              badge1Title: json.data.badge1Title || defaultAbout.badge1Title,
-              badge1Subtitle: json.data.badge1Subtitle || defaultAbout.badge1Subtitle,
-              badge2Title: json.data.badge2Title || defaultAbout.badge2Title,
-              badge2Subtitle: json.data.badge2Subtitle || defaultAbout.badge2Subtitle,
-              badge3Text: json.data.badge3Text || defaultAbout.badge3Text,
-            });
-          }
-        }
-      } catch (err) {
-        console.error('Failed fetching dynamic about info:', err);
-      }
-    }
-    loadAbout();
-  }, []);
+export default async function AboutPage() {
+  const about = await getAboutData();
+
+  const titlePrefix = about?.titlePrefix || 'Pioneering Clinical Precision &';
+  const titleHighlight = about?.titleHighlight || 'Trusted Healthcare.';
+  const description =
+    about?.description ||
+    'At AiCura Diagnostics, we believe accurate diagnostics are the cornerstone of effective healthcare. Combining state-of-the-art laboratory automation with seasoned medical pathologists, we deliver trustworthy, high-precision results for you and your family.';
+  const imageUrl =
+    about?.imageUrl ||
+    'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&q=80&w=1000';
+  const badge1Title = about?.badge1Title || 'Certified Standard';
+  const badge1Subtitle = about?.badge1Subtitle || 'Quality Assured Testing';
+  const badge2Title = about?.badge2Title || '99.8% Precision';
+  const badge2Subtitle = about?.badge2Subtitle || 'Double Verified Results';
+
+  // Extract stat values directly from saved admin fields (no hardcoded 10,000+ fallback)
+  const badge3Raw = (about?.badge3Text || '').trim();
+  const badge3Parts = badge3Raw ? badge3Raw.split(/\s+/) : [];
+  const patientStatValue = badge3Parts[0] || '';
+  const patientStatLabel = badge3Parts.length > 1 ? badge3Parts.slice(1).join(' ') : 'Happy Patients';
+
+  const badge2Parts = badge2Title.trim().split(/\s+/);
+  const accuracyStatValue = badge2Parts[0] || '99.8%';
+
+  const stats = [
+    { value: patientStatValue, label: patientStatLabel },
+    { value: accuracyStatValue, label: 'Report Accuracy' },
+    { value: '500+', label: 'Tests Available' },
+    { value: '6–24h', label: 'Report Delivery' },
+  ];
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8faf9]">
@@ -94,7 +80,7 @@ export default function AboutPage() {
       {/* ── Hero Banner ── */}
       <section className="relative w-full h-[340px] sm:h-[440px] overflow-hidden">
         <Image
-          src="/Modern Clinic about us page.png"
+          src="/about-us-banner.webp"
           alt="AiCura Diagnostics — doctor consulting patient"
           fill
           priority
@@ -147,11 +133,11 @@ export default function AboutPage() {
               Our Journey &amp; Mission
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight">
-              {about.titlePrefix}{' '}
-              <span className="text-brand-700">{about.titleHighlight}</span>
+              {titlePrefix}{' '}
+              <span className="text-brand-700">{titleHighlight}</span>
             </h2>
             <p className="text-slate-600 text-sm leading-relaxed">
-              {about.description}
+              {description}
             </p>
             <p className="text-slate-600 text-sm leading-relaxed">
               From routine blood screenings to specialized hormonal and genetic panels, every specimen undergoes rigorous multi-tier quality checks to ensure flawless clinical accuracy.
@@ -163,8 +149,8 @@ export default function AboutPage() {
                   <ShieldCheck className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-slate-800">{about.badge1Title}</p>
-                  <p className="text-[11px] text-slate-500">{about.badge1Subtitle}</p>
+                  <p className="text-xs font-bold text-slate-800">{badge1Title}</p>
+                  <p className="text-[11px] text-slate-500">{badge1Subtitle}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
@@ -172,8 +158,8 @@ export default function AboutPage() {
                   <Award className="w-5 h-5 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-slate-800">{about.badge2Title}</p>
-                  <p className="text-[11px] text-slate-500">{about.badge2Subtitle}</p>
+                  <p className="text-xs font-bold text-slate-800">{badge2Title}</p>
+                  <p className="text-[11px] text-slate-500">{badge2Subtitle}</p>
                 </div>
               </div>
             </div>
@@ -183,7 +169,7 @@ export default function AboutPage() {
           <div className="relative">
             <div className="relative h-[420px] w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-100">
               <Image
-                src={about.imageUrl || defaultAbout.imageUrl}
+                src={imageUrl}
                 alt="AiCura Diagnostic Laboratory facility"
                 fill
                 className="object-cover"
@@ -195,7 +181,7 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <p className="text-xs font-extrabold text-slate-800">4.9 / 5 Rating</p>
-                  <p className="text-[11px] text-slate-500">10,000+ verified reviews</p>
+                  <p className="text-[11px] text-slate-500">{badge3Raw ? `${badge3Parts[0]} verified reviews` : 'Verified Reviews'}</p>
                 </div>
               </div>
             </div>

@@ -83,7 +83,7 @@ function TestsContent() {
       {/* Banner */}
       <section className="relative w-full h-[45vh] min-h-[260px] bg-white border-b border-slate-200 shadow-sm overflow-hidden flex items-center">
         <Image
-          src="/Modern Diagnostic Testing Banner.png"
+          src="/tests-services-banner.webp"
           alt="Diagnostic Tests & Services - AiCura Diagnostics"
           fill
           priority
