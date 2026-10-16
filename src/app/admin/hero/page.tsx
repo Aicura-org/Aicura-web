@@ -526,11 +526,10 @@ export default function AdminHeroPage() {
         {/* Notice Banner */}
         {notification && (
           <div
-            className={`p-4 rounded-2xl flex items-center justify-between gap-3 text-xs font-semibold shadow-sm transition-all ${
-              notification.type === 'success'
+            className={`p-4 rounded-2xl flex items-center justify-between gap-3 text-xs font-semibold shadow-sm transition-all ${notification.type === 'success'
                 ? 'bg-emerald-50 text-emerald-900 border border-emerald-200'
                 : 'bg-red-50 text-red-900 border border-red-200'
-            }`}
+              }`}
           >
             <div className="flex items-center gap-2.5">
               {notification.type === 'success' ? (
@@ -554,11 +553,10 @@ export default function AdminHeroPage() {
                 key={idx}
                 type="button"
                 onClick={() => handleSelectSlide(idx)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-                  idx === activeSlideIndex
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${idx === activeSlideIndex
                     ? 'bg-brand-900 text-yellow-400 shadow-md ring-2 ring-yellow-400/40'
                     : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                }`}
+                  }`}
               >
                 <span>Slide {idx + 1}</span>
                 {slide.imageUrl && (
@@ -707,22 +705,20 @@ export default function AdminHeroPage() {
                     <button
                       type="button"
                       onClick={() => setDesktopInputMode('upload')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                        desktopInputMode === 'upload'
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${desktopInputMode === 'upload'
                           ? 'bg-white text-brand-900 shadow-sm'
                           : 'text-slate-500 hover:text-slate-900'
-                      }`}
+                        }`}
                     >
                       Upload
                     </button>
                     <button
                       type="button"
                       onClick={() => setDesktopInputMode('url')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                        desktopInputMode === 'url'
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${desktopInputMode === 'url'
                           ? 'bg-white text-brand-900 shadow-sm'
                           : 'text-slate-500 hover:text-slate-900'
-                      }`}
+                        }`}
                     >
                       URL
                     </button>
@@ -830,22 +826,20 @@ export default function AdminHeroPage() {
                     <button
                       type="button"
                       onClick={() => setMobileInputMode('upload')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                        mobileInputMode === 'upload'
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${mobileInputMode === 'upload'
                           ? 'bg-white text-brand-900 shadow-sm'
                           : 'text-slate-500 hover:text-slate-900'
-                      }`}
+                        }`}
                     >
                       Upload
                     </button>
                     <button
                       type="button"
                       onClick={() => setMobileInputMode('url')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
-                        mobileInputMode === 'url'
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${mobileInputMode === 'url'
                           ? 'bg-white text-brand-900 shadow-sm'
                           : 'text-slate-500 hover:text-slate-900'
-                      }`}
+                        }`}
                     >
                       URL
                     </button>
@@ -975,22 +969,20 @@ export default function AdminHeroPage() {
                     <button
                       type="button"
                       onClick={() => setPreviewTab('desktop')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                        previewTab === 'desktop'
+                      className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${previewTab === 'desktop'
                           ? 'bg-brand-700 text-white shadow-sm'
                           : 'text-slate-400 hover:text-white'
-                      }`}
+                        }`}
                     >
                       <Monitor className="w-3.5 h-3.5" /> Desktop
                     </button>
                     <button
                       type="button"
                       onClick={() => setPreviewTab('mobile')}
-                      className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                        previewTab === 'mobile'
+                      className={`px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${previewTab === 'mobile'
                           ? 'bg-brand-700 text-white shadow-sm'
                           : 'text-slate-400 hover:text-white'
-                      }`}
+                        }`}
                     >
                       <Smartphone className="w-3.5 h-3.5" /> Mobile
                     </button>
@@ -1049,9 +1041,8 @@ export default function AdminHeroPage() {
                             {validPreviewSlides.map((_, i) => (
                               <div
                                 key={i}
-                                className={`h-1.5 rounded-full transition-all ${
-                                  i === previewIndex ? 'w-5 bg-yellow-400' : 'w-1.5 bg-white/50'
-                                }`}
+                                className={`h-1.5 rounded-full transition-all ${i === previewIndex ? 'w-5 bg-yellow-400' : 'w-1.5 bg-white/50'
+                                  }`}
                               />
                             ))}
                           </div>
@@ -1115,9 +1106,8 @@ export default function AdminHeroPage() {
                             {validPreviewSlides.map((_, i) => (
                               <div
                                 key={i}
-                                className={`h-1.5 rounded-full transition-all ${
-                                  i === previewIndex ? 'w-4 bg-yellow-400' : 'w-1.5 bg-white/50'
-                                }`}
+                                className={`h-1.5 rounded-full transition-all ${i === previewIndex ? 'w-4 bg-yellow-400' : 'w-1.5 bg-white/50'
+                                  }`}
                               />
                             ))}
                           </div>
