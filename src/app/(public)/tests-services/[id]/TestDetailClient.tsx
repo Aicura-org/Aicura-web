@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import EnquireModal from '@/components/ui/EnquireModal';
 import {
     FlaskConical,
@@ -26,14 +26,20 @@ interface DiagnosticTestRecord {
     description?: string | null;
 }
 
-export default function TestDetailClient({
-    test,
-    whatsappNumber,
-}: {
-    test: DiagnosticTestRecord;
-    whatsappNumber: string | null;
-}) {
+export default function TestDetailClient({ test }: { test: DiagnosticTestRecord }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
+
+    useEffect(() => {
+        fetch('/api/company-details?primary=true')
+            .then((res) => (res.ok ? res.json() : null))
+            .then((json) => {
+                const number = json?.success ? json.data?.whatsappNumber?.replace(/\D/g, '') : '';
+                if (number) setWhatsappNumber(number);
+            })
+            .catch(() => {});
+    }, []);
+
     const cleanWhatsAppNumber = whatsappNumber?.replace(/\D/g, '');
 
     const savings =

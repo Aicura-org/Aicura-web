@@ -3,7 +3,6 @@ import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
-import { CompanyService } from '@/services/company.service';
 import TestDetailClient from './TestDetailClient';
 import {
   FlaskConical,
@@ -58,8 +57,6 @@ export default async function TestDetailPage({ params }: Props) {
     notFound();
   }
 
-  const companyDetails = await CompanyService.getPrimaryCompanyDetails();
-
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-16">
       {/* Breadcrumbs */}
@@ -83,7 +80,7 @@ export default async function TestDetailPage({ params }: Props) {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <TestDetailClient test={test} whatsappNumber={companyDetails?.whatsappNumber ?? null} />
+        <TestDetailClient test={test} />
       </main>
     </div>
   );
