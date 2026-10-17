@@ -26,8 +26,15 @@ interface DiagnosticTestRecord {
     description?: string | null;
 }
 
-export default function TestDetailClient({ test }: { test: DiagnosticTestRecord }) {
+export default function TestDetailClient({
+    test,
+    whatsappNumber,
+}: {
+    test: DiagnosticTestRecord;
+    whatsappNumber: string | null;
+}) {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const cleanWhatsAppNumber = whatsappNumber?.replace(/\D/g, '');
 
     const savings =
         test.originalPrice && test.originalPrice > test.price
@@ -97,16 +104,18 @@ export default function TestDetailClient({ test }: { test: DiagnosticTestRecord 
                             Book Home Collection
                         </button>
 
-                        <a
-                            href={`https://wa.me/919946284615?text=${encodeURIComponent(
-                                `Hi AiCura, I would like to book the test: ${test.name} (${test.code})`
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition-colors"
-                        >
-                            <MessageCircle className="w-4 h-4" /> Book via WhatsApp
-                        </a>
+                        {cleanWhatsAppNumber && (
+                            <a
+                                href={`https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
+                                    `Hi AiCura, I would like to book the test: ${test.name} (${test.code})`
+                                )}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm flex items-center justify-center gap-2 transition-colors"
+                            >
+                                <MessageCircle className="w-4 h-4" /> Book via WhatsApp
+                            </a>
+                        )}
                     </div>
                 </div>
             </div>

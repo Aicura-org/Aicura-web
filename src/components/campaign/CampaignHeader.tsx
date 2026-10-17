@@ -6,17 +6,17 @@ import AiCuraLogo from '@/components/ui/AiCuraLogo';
 
 interface CampaignHeaderProps {
   phone?: string;
-  whatsappNumber?: string;
+  whatsappNumber?: string | null;
   campaignTitle?: string;
 }
 
 export function CampaignHeader({
   phone = '98479 86333',
-  whatsappNumber = '9847986333',
+  whatsappNumber,
   campaignTitle,
 }: CampaignHeaderProps) {
   const cleanPhone = phone.replace(/\s+/g, '');
-  const cleanWhatsApp = whatsappNumber.replace(/[^0-9]/g, '');
+  const cleanWhatsApp = whatsappNumber?.replace(/[^0-9]/g, '');
 
   const whatsappMessage = campaignTitle
     ? `Hi AiCura, I would like to enquire about: ${campaignTitle}`
@@ -52,16 +52,18 @@ export function CampaignHeader({
           </a>
 
           {/* WhatsApp Button */}
-          <a
-            href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(whatsappMessage)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#25D366] hover:bg-[#20ba59] active:bg-[#1da850] text-white px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold shadow-xs hover:shadow transition-all active:scale-95 shrink-0"
-          >
-            <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current shrink-0" />
-            <span className="hidden sm:inline">WhatsApp Us</span>
-            <span className="sm:hidden">WhatsApp</span>
-          </a>
+          {cleanWhatsApp && (
+            <a
+              href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(whatsappMessage)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#25D366] hover:bg-[#20ba59] active:bg-[#1da850] text-white px-3 sm:px-5 py-1.5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold shadow-xs hover:shadow transition-all active:scale-95 shrink-0"
+            >
+              <MessageCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-current shrink-0" />
+              <span className="hidden sm:inline">WhatsApp Us</span>
+              <span className="sm:hidden">WhatsApp</span>
+            </a>
+          )}
         </div>
       </div>
     </header>

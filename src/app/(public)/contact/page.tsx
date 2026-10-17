@@ -101,14 +101,16 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <span className="font-bold text-slate-900 block">WhatsApp Support</span>
-                    <a
-                      href={`https://wa.me/${(company?.whatsappNumber || '919946284615').replace(/\D/g, '')}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-emerald-700 hover:underline font-semibold"
-                    >
-                      {company?.whatsappNumber || '+91 99462 84615'}
-                    </a>
+                    {company?.whatsappNumber && company.whatsappNumber.replace(/\D/g, '') && (
+                      <a
+                        href={`https://wa.me/${company.whatsappNumber.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-emerald-700 hover:underline font-semibold"
+                      >
+                        {company.whatsappNumber}
+                      </a>
+                    )}
                   </div>
                 </div>
 

@@ -16,7 +16,7 @@ function WhatsAppIcon({ className = 'w-7 h-7' }: { className?: string }) {
 }
 
 export default function WhatsAppBtn() {
-  const [whatsappNumber, setWhatsappNumber] = useState('919946284615');
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
   const defaultText = encodeURIComponent('Hello AiCura Diagnostics, I would like to enquire about a diagnostic test/package.');
 
   useEffect(() => {
@@ -30,6 +30,8 @@ export default function WhatsAppBtn() {
       })
       .catch(() => {});
   }, []);
+
+  if (!whatsappNumber) return null;
 
   return (
     <a
