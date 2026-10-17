@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CampaignItem } from '@/types';
 import { parseCampaignContent } from '@/lib/campaign-helper';
 import { CampaignHeader } from './CampaignHeader';
@@ -34,6 +34,18 @@ const FALLBACK_CAMPAIGN: CampaignItem = {
 };
 
 export function CampaignLandingView({ campaign }: CampaignLandingViewProps) {
+  const [whatsappNumber, setWhatsappNumber] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/company-details?primary=true')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        const number = json?.success ? json.data?.whatsappNumber?.replace(/\D/g, '') : '';
+        if (number) setWhatsappNumber(number);
+      })
+      .catch(() => {});
+  }, []);
+
   const effectiveCampaign = campaign || FALLBACK_CAMPAIGN;
   const parsedData = parseCampaignContent(effectiveCampaign);
 
@@ -42,7 +54,7 @@ export function CampaignLandingView({ campaign }: CampaignLandingViewProps) {
       {/* 1. Dedicated Minimal Campaign Header */}
       <CampaignHeader
         phone="98479 86333"
-        whatsappNumber="9847986333"
+        whatsappNumber={whatsappNumber}
         campaignTitle={effectiveCampaign.title}
       />
 
@@ -73,7 +85,7 @@ export function CampaignLandingView({ campaign }: CampaignLandingViewProps) {
       {/* 8. Dedicated Minimal Campaign Footer */}
       <CampaignFooter
         phone="98479 86333"
-        whatsappNumber="9847986333"
+        whatsappNumber={whatsappNumber}
         campaignTitle={effectiveCampaign.title}
       />
     </div>

@@ -7,15 +7,15 @@ import HomeCollectionFloatingBtn from '@/components/layout/HomeCollectionFloatin
 
 interface CampaignFooterProps {
   phone?: string;
-  whatsappNumber?: string;
+  whatsappNumber?: string | null;
   campaignTitle?: string;
 }
 
 export function CampaignFooter({
-  whatsappNumber = '9847986333',
+  whatsappNumber,
   campaignTitle,
 }: CampaignFooterProps) {
-  const cleanWhatsApp = whatsappNumber.replace(/[^0-9]/g, '');
+  const cleanWhatsApp = whatsappNumber?.replace(/[^0-9]/g, '');
 
   const whatsappMessage = campaignTitle
     ? `Hi AiCura, I am on the ${campaignTitle} campaign page and would like assistance.`
@@ -53,15 +53,17 @@ export function CampaignFooter({
       />
 
       {/* Floating WhatsApp Action Button (bottom right matching reference) */}
-      <a
-        href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(whatsappMessage)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat on WhatsApp"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-13 sm:h-13 bg-[#25D366] hover:bg-[#20ba59] active:bg-[#1da850] text-white rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95"
-      >
-        <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
-      </a>
+      {cleanWhatsApp && (
+        <a
+          href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(whatsappMessage)}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Chat on WhatsApp"
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-13 sm:h-13 bg-[#25D366] hover:bg-[#20ba59] active:bg-[#1da850] text-white rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-105 active:scale-95"
+        >
+          <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 fill-current" />
+        </a>
+      )}
     </>
   );
 }
