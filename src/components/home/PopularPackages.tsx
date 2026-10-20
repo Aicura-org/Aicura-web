@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { ArrowRight, Loader2, Eye } from 'lucide-react';
 import { PackageItem } from '@/types';
 import EnquireModal from '../ui/EnquireModal';
-import PackageDetailsModal from '../ui/PackageDetailsModal';
 
 const INITIAL_COUNT = 4;
 
@@ -14,9 +13,7 @@ export default function PopularPackages() {
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPkg, setSelectedPkg] = useState<PackageItem | null>(null);
-  const [detailPkg, setDetailPkg] = useState<PackageItem | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   useEffect(() => {
     async function fetchPackages() {
@@ -40,11 +37,6 @@ export default function PopularPackages() {
   const handleEnquire = (pkg: PackageItem) => {
     setSelectedPkg(pkg);
     setIsModalOpen(true);
-  };
-
-  const handleViewDetails = (pkg: PackageItem) => {
-    setDetailPkg(pkg);
-    setIsDetailModalOpen(true);
   };
 
   const defaultImages: Record<string, string> = {
@@ -100,6 +92,7 @@ export default function PopularPackages() {
                     pkg.originalPrice > pkg.discountedPrice
                       ? Math.round((1 - pkg.discountedPrice / pkg.originalPrice) * 100)
                       : 0;
+                  const packageUrl = `/packages/${pkg.slug}`;
 
                   return (
                     <div
@@ -107,9 +100,9 @@ export default function PopularPackages() {
                       className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden ring-1 ring-slate-100 shadow-[0_2px_16px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_36px_rgba(15,23,42,0.12)] transition-all duration-300 flex flex-col group sm:hover:-translate-y-1"
                     >
                       {/* Image: full bleed, no padding */}
-                      <div
-                        onClick={() => handleViewDetails(pkg)}
-                        className="relative w-full h-36 sm:h-52 shrink-0 overflow-hidden bg-slate-200 cursor-pointer"
+                      <Link
+                        href={packageUrl}
+                        className="relative w-full h-36 sm:h-52 shrink-0 overflow-hidden bg-slate-200 block"
                       >
                         <Image
                           src={bgImg}
@@ -123,16 +116,15 @@ export default function PopularPackages() {
                         <div className="absolute bottom-2 left-2 bg-white/95 text-emerald-700 text-[10px] sm:text-[11px] font-semibold px-2.5 py-0.5 rounded-full shadow-sm">
                           {pkg.testCount}+ Tests
                         </div>
-                      </div>
+                      </Link>
 
                       {/* Content */}
                       <div className="flex flex-col flex-1 min-w-0 p-2.5 sm:p-4">
-                        <h3
-                          onClick={() => handleViewDetails(pkg)}
-                          className="text-[13px] font-semibold sm:text-base sm:font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-0 group-hover:text-brand-700 transition-colors cursor-pointer"
-                        >
-                          {pkg.title}
-                        </h3>
+                        <Link href={packageUrl} className="block">
+                          <h3 className="text-[13px] font-semibold sm:text-base sm:font-bold text-slate-900 leading-snug line-clamp-2 min-h-[2.25rem] sm:min-h-0 group-hover:text-brand-700 transition-colors">
+                            {pkg.title}
+                          </h3>
+                        </Link>
                         <p className="text-slate-500 text-[10px] sm:text-xs leading-snug mt-1 line-clamp-2">
                           {pkg.description}
                         </p>
@@ -159,19 +151,18 @@ export default function PopularPackages() {
                             <button
                               type="button"
                               onClick={() => handleEnquire(pkg)}
-                              className="flex-1 py-2 sm:py-2.5 gold-gradient hover:gold-gradient-hover text-brand-900 font-semibold sm:font-bold text-[11px] sm:text-xs rounded-full shadow-sm transition-all hover:scale-[1.02] active:scale-95"
+                              className="flex-1 py-2 sm:py-2.5 gold-gradient hover:gold-gradient-hover text-brand-900 font-semibold sm:font-bold text-[11px] sm:text-xs rounded-full shadow-sm transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
                             >
                               Enquire Now
                             </button>
-                            <button
-                              type="button"
-                              onClick={() => handleViewDetails(pkg)}
+                            <Link
+                              href={packageUrl}
                               aria-label="View details"
                               title="View details"
                               className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 rounded-full border border-slate-200 text-slate-500 hover:border-brand-700 hover:bg-brand-700 hover:text-white flex items-center justify-center transition-colors"
                             >
                               <Eye className="w-4 h-4" />
-                            </button>
+                            </Link>
                           </div>
                         </div>
                       </div>
@@ -195,17 +186,6 @@ export default function PopularPackages() {
 
         </div>
       </section>
-
-      {/* Full Package Details Modal */}
-      <PackageDetailsModal
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-        pkg={detailPkg}
-        onEnquire={(pkg) => {
-          setIsDetailModalOpen(false);
-          handleEnquire(pkg);
-        }}
-      />
 
       {/* Enquiry Modal */}
       <EnquireModal

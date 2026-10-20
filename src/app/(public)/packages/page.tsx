@@ -2,16 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import EnquireModal from '@/components/ui/EnquireModal';
-import PackageDetailsModal from '@/components/ui/PackageDetailsModal';
 import { PackageItem } from '@/types';
-import { CheckCircle2, Loader2, Sparkles } from 'lucide-react';
+import { CheckCircle2, Loader2, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function PackagesPage() {
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedPkg, setSelectedPkg] = useState<PackageItem | null>(null);
-  const [detailModalPkg, setDetailModalPkg] = useState<PackageItem | null>(null);
   const [isEnquireOpen, setIsEnquireOpen] = useState(false);
 
   useEffect(() => {
@@ -90,6 +89,7 @@ export default function PackagesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {packages.map((pkg) => {
               const bgImg = pkg.imageUrl || defaultImages[pkg.category] || 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=600';
+              const packageUrl = `/packages/${pkg.slug}`;
               return (
                 <div
                   key={pkg.id}
@@ -97,9 +97,9 @@ export default function PackagesPage() {
                 >
                   <div>
                     {/* Image Container */}
-                    <div 
-                      onClick={() => setDetailModalPkg(pkg)}
-                      className="relative h-48 w-full bg-slate-200 overflow-hidden cursor-pointer"
+                    <Link 
+                      href={packageUrl}
+                      className="relative h-48 w-full bg-slate-200 overflow-hidden block"
                     >
                       <Image
                         src={bgImg}
@@ -119,7 +119,7 @@ export default function PackagesPage() {
                           </span>
                         </div>
                       )}
-                    </div>
+                    </Link>
 
                     {/* Body Content */}
                     <div className="p-6 space-y-4">
@@ -130,14 +130,13 @@ export default function PackagesPage() {
                         <span className="text-xs text-slate-400 font-medium">Home Sample Included</span>
                       </div>
 
-                      <h2 
-                        onClick={() => setDetailModalPkg(pkg)}
-                        className="text-xl font-bold text-slate-900 group-hover:text-brand-700 transition-colors cursor-pointer"
-                      >
-                        {pkg.title}
-                      </h2>
+                      <Link href={packageUrl} className="block">
+                        <h2 className="text-xl font-bold text-slate-900 group-hover:text-brand-700 transition-colors leading-snug">
+                          {pkg.title}
+                        </h2>
+                      </Link>
 
-                      <p className="text-slate-600 text-xs leading-relaxed">
+                      <p className="text-slate-600 text-xs leading-relaxed line-clamp-3">
                         {pkg.description}
                       </p>
 
@@ -148,18 +147,17 @@ export default function PackagesPage() {
                           {pkg.includedTests.slice(0, 4).map((testName, i) => (
                             <li key={i} className="flex items-start gap-2">
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
-                              <span>{testName}</span>
+                              <span className="line-clamp-1">{testName}</span>
                             </li>
                           ))}
                         </ul>
                         {pkg.includedTests.length > 4 && (
-                          <button
-                            type="button"
-                            onClick={() => setDetailModalPkg(pkg)}
-                            className="text-xs text-brand-700 hover:text-brand-900 font-bold mt-2 flex items-center gap-1"
+                          <Link
+                            href={packageUrl}
+                            className="text-xs text-brand-700 hover:text-brand-900 font-bold mt-2 inline-flex items-center gap-1"
                           >
                             + View all {pkg.includedTests.length} tests →
-                          </button>
+                          </Link>
                         )}
                       </div>
                     </div>
@@ -185,17 +183,16 @@ export default function PackagesPage() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setDetailModalPkg(pkg)}
-                        className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-xl transition-colors"
+                      <Link
+                        href={packageUrl}
+                        className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold text-xs rounded-xl transition-colors text-center flex items-center justify-center"
                       >
                         Details & Tests
-                      </button>
+                      </Link>
                       <button
                         type="button"
                         onClick={() => handleEnquire(pkg)}
-                        className="w-full py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs rounded-xl shadow transition-transform hover:scale-105"
+                        className="w-full py-3 gold-gradient hover:gold-gradient-hover text-brand-900 font-bold text-xs rounded-xl shadow transition-transform hover:scale-105 cursor-pointer"
                       >
                         Book Package →
                       </button>
@@ -208,16 +205,6 @@ export default function PackagesPage() {
           </div>
         )}
       </main>
-      {/* Package Details Modal */}
-      <PackageDetailsModal
-        isOpen={Boolean(detailModalPkg)}
-        onClose={() => setDetailModalPkg(null)}
-        pkg={detailModalPkg}
-        onEnquire={(pkg) => {
-          setDetailModalPkg(null);
-          handleEnquire(pkg);
-        }}
-      />
 
       {/* Enquire Modal */}
       <EnquireModal
