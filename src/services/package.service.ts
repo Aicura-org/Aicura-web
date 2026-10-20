@@ -1,13 +1,41 @@
 import { prisma } from '@/lib/prisma';
 import { CreatePackageInput, UpdatePackageInput } from '@/types';
 
-function slugify(text: string): string {
-  return text
+export function slugify(text: string, fallback = 'health-package'): string {
+  if (!text) return `${fallback}-${Date.now().toString(36)}`;
+
+  const slug = text
+    .normalize('NFKD')
     .toLowerCase()
-    .trim()
+    .replace(/[\u2010-\u2015_]/g, '-')
     .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
+    .trim()
+    .replace(/[\s-]+/g, '-')
     .replace(/^-+|-+$/g, '');
+
+  if (!slug || slug.length < 2) {
+    return `${fallback}-${Date.now().toString(36)}`;
+  }
+  return slug;
+}
+
+export async function resolveUniqueSlug(baseSlug: string, currentId?: string): Promise<string> {
+  let checkSlug = baseSlug;
+  let counter = 2;
+
+  while (true) {
+    const existing = await prisma.package.findUnique({
+      where: { slug: checkSlug },
+      select: { id: true },
+    });
+
+    if (!existing || (currentId && existing.id === currentId)) {
+      return checkSlug;
+    }
+
+    checkSlug = `${baseSlug}-${counter}`;
+    counter++;
+  }
 }
 
 export const PackageService = {
@@ -39,15 +67,9 @@ export const PackageService = {
   },
 
   async createPackage(input: CreatePackageInput) {
-    const slug = input.slug || slugify(input.title);
-
-    // Ensure unique slug
-    let finalSlug = slug;
-    let counter = 1;
-    while (await prisma.package.findUnique({ where: { slug: finalSlug } })) {
-      finalSlug = `${slug}-${counter}`;
-      counter++;
-    }
+    const fallbackCategory = input.category ? slugify(input.category) : 'package';
+    const rawSlug = input.slug?.trim() ? slugify(input.slug) : slugify(input.title, fallbackCategory);
+    const finalSlug = await resolveUniqueSlug(rawSlug);
 
     return prisma.package.create({
       data: {
@@ -74,21 +96,18 @@ export const PackageService = {
     if (!existing) return null;
 
     let slug = existing.slug;
-    if (input.title && input.title !== existing.title && !input.slug) {
-      slug = slugify(input.title);
-      let counter = 1;
-      let checkSlug = slug;
-      while (true) {
-        const found = await prisma.package.findUnique({ where: { slug: checkSlug } });
-        if (!found || found.id === id) {
-          slug = checkSlug;
-          break;
-        }
-        checkSlug = `${slug}-${counter}`;
-        counter++;
-      }
-    } else if (input.slug) {
-      slug = input.slug;
+    const shouldRegenerateSlug = 
+      (input.title && input.title !== existing.title && !input.slug) ||
+      !slug || 
+      slug.trim() === '';
+
+    if (input.slug && input.slug.trim() !== '') {
+      const baseSlug = slugify(input.slug);
+      slug = await resolveUniqueSlug(baseSlug, id);
+    } else if (shouldRegenerateSlug) {
+      const fallback = input.category || existing.category ? slugify(input.category || existing.category) : 'package';
+      const baseSlug = slugify(input.title || existing.title, fallback);
+      slug = await resolveUniqueSlug(baseSlug, id);
     }
 
     return prisma.package.update({
@@ -110,6 +129,26 @@ export const PackageService = {
         ...(input.isPublished !== undefined && { isPublished: input.isPublished }),
       },
     });
+  },
+
+  async syncMissingSlugs() {
+    const packages = await prisma.package.findMany({
+      select: { id: true, title: true, slug: true, category: true },
+    });
+    let updatedCount = 0;
+    for (const pkg of packages) {
+      if (!pkg.slug || pkg.slug.trim() === '' || pkg.slug.startsWith('-')) {
+        const fallback = pkg.category ? slugify(pkg.category) : 'package';
+        const baseSlug = slugify(pkg.title, fallback);
+        const finalSlug = await resolveUniqueSlug(baseSlug, pkg.id);
+        await prisma.package.update({
+          where: { id: pkg.id },
+          data: { slug: finalSlug },
+        });
+        updatedCount++;
+      }
+    }
+    return updatedCount;
   },
 
   async deletePackage(id: string) {

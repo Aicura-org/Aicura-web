@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { PackageItem } from '@/types';
-import { Plus, Trash2, Edit, X, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Edit, X, Eye, EyeOff, Loader2, ExternalLink, Copy, Check } from 'lucide-react';
 
 export default function AdminPackagesPage() {
   const [packages, setPackages] = useState<PackageItem[]>([]);
@@ -27,6 +27,16 @@ export default function AdminPackagesPage() {
   const [isPublished, setIsPublished] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleCopyLink = (slug: string, id: string) => {
+    const fullUrl = `${window.location.origin}/packages/${slug}`;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(fullUrl);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
+  };
 
   useEffect(() => {
     loadPackages();
@@ -114,9 +124,12 @@ export default function AdminPackagesPage() {
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
         await loadPackages();
         resetForm();
+      } else {
+        alert(data.message || 'Failed to save package. Please check inputs.');
       }
     } catch (err) {
       console.error('Package save failed:', err);
@@ -429,8 +442,21 @@ export default function AdminPackagesPage() {
                   <tr key={pkg.id} className="hover:bg-slate-50">
                     <td className="p-4">
                       <div className="font-bold text-slate-900">{pkg.title}</div>
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <span className="text-[10px] text-slate-500 font-mono bg-slate-100 px-1.5 py-0.5 rounded">
+                          /{pkg.slug}
+                        </span>
+                        <a
+                          href={`/packages/${pkg.slug}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[10px] text-brand-700 hover:text-brand-900 font-bold inline-flex items-center gap-0.5 hover:underline"
+                        >
+                          View Live <ExternalLink className="w-2.5 h-2.5" />
+                        </a>
+                      </div>
                       {pkg.isPopular && (
-                        <span className="text-[10px] text-amber-600 font-semibold">★ Popular</span>
+                        <span className="text-[10px] text-amber-600 font-semibold block mt-0.5">★ Popular</span>
                       )}
                     </td>
                     <td className="p-4">
@@ -446,7 +472,7 @@ export default function AdminPackagesPage() {
                     <td className="p-4">
                       <button
                         onClick={() => handleTogglePublish(pkg)}
-                        className={`px-2 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 ${
+                        className={`px-2 py-1 rounded-full text-[10px] font-bold flex items-center gap-1 cursor-pointer ${
                           pkg.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
                         }`}
                       >
@@ -454,17 +480,28 @@ export default function AdminPackagesPage() {
                         {pkg.isPublished ? 'Published' : 'Hidden'}
                       </button>
                     </td>
-                    <td className="p-4 text-right space-x-2">
+                    <td className="p-4 text-right space-x-1.5">
+                      <button
+                        onClick={() => handleCopyLink(pkg.slug, pkg.id)}
+                        className="p-1.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-emerald-600 hover:text-white transition-colors cursor-pointer"
+                        title="Copy Customer / Ad Link"
+                      >
+                        {copiedId === pkg.id ? (
+                          <Check className="w-3.5 h-3.5 text-emerald-600" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
+                      </button>
                       <button
                         onClick={() => handleEdit(pkg)}
-                        className="p-1.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-brand-700 hover:text-white transition-colors"
+                        className="p-1.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-brand-700 hover:text-white transition-colors cursor-pointer"
                         title="Edit Package"
                       >
                         <Edit className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={() => handleDelete(pkg.id)}
-                        className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-colors"
+                        className="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-colors cursor-pointer"
                         title="Delete Package"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
