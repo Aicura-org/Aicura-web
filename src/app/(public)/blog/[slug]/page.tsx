@@ -65,9 +65,43 @@ export default async function BlogDetailPage({ params }: Props) {
   }
 
   const renderedHtml = plainTextToHtml(blog.content);
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aicuradiagnostics.com').replace(
+    /\/+$/,
+    ''
+  );
+
+  const articleJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: blog.title,
+    description: blog.excerpt,
+    image: blog.coverImage ? [blog.coverImage] : [`${siteUrl}/android-chrome-512x512.png`],
+    datePublished: new Date(blog.publishedAt).toISOString(),
+    dateModified: new Date(blog.updatedAt || blog.publishedAt).toISOString(),
+    author: {
+      '@type': 'Person',
+      name: blog.author,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'AiCura Diagnostics',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteUrl}/android-chrome-512x512.png`,
+      },
+    },
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': `${siteUrl}/blog/${blog.slug}`,
+    },
+  };
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full space-y-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <Link
         href="/blog"
         className="inline-flex items-center gap-2 text-xs font-bold text-brand-700 hover:text-brand-900 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200"
