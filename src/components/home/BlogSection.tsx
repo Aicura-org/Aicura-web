@@ -5,26 +5,35 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Clock } from 'lucide-react';
 
-interface BlogItem {
+export interface BlogDisplayItem {
   id: string;
   title: string;
   slug: string;
   excerpt: string;
   coverImage: string;
   readTime: string;
-  publishedAt: string;
+  publishedAt: string | Date;
 }
 
-export default function BlogSection() {
-  const [blogs, setBlogs] = useState<BlogItem[]>([]);
+interface BlogSectionProps {
+  initialData?: BlogDisplayItem[];
+}
+
+export default function BlogSection({ initialData }: BlogSectionProps) {
+  const [blogs, setBlogs] = useState<BlogDisplayItem[]>(initialData ? initialData.slice(0, 3) : []);
 
   useEffect(() => {
+    if (initialData !== undefined) {
+      setBlogs(initialData.slice(0, 3));
+      return;
+    }
+
     async function fetchBlogs() {
       try {
-        const res = await fetch('/api/blogs');
+        const res = await fetch('/api/blogs', { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
-          if (data.success && data.data) {
+          if (data.success && Array.isArray(data.data)) {
             setBlogs(data.data.slice(0, 3));
           }
         }
@@ -33,7 +42,11 @@ export default function BlogSection() {
       }
     }
     fetchBlogs();
-  }, []);
+  }, [initialData]);
+
+  if (blogs.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-16 bg-slate-50">
@@ -43,7 +56,7 @@ export default function BlogSection() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
           <div>
             <span className="text-brand-700 text-xs font-bold uppercase tracking-wider block mb-1">
-              HEALTH ARTICLES & BLOGS
+              HEALTH ARTICLES &amp; BLOGS
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 font-sans tracking-tight">
               Understand Your Health
@@ -110,7 +123,6 @@ export default function BlogSection() {
           ))}
         </div>
 
-        {/* Mobile: button at bottom (hidden on md and up) */}
         {/* Mobile: button at bottom (hidden on md and up) */}
         <div className="md:hidden mt-8 flex justify-center">
           <Link

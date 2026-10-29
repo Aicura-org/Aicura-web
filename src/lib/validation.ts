@@ -174,3 +174,74 @@ export function validateDiagnosticTestInput(body: any, isUpdate = false): ApiErr
   return errors;
 }
 
+
+
+export function validateTestimonialInput(body: any, isUpdate = false): ApiErrorDetail[] {
+  const errors: ApiErrorDetail[] = [];
+
+  if (!isUpdate) {
+    if (!body.patientName || typeof body.patientName !== 'string' || body.patientName.trim().length === 0) {
+      errors.push({ field: 'patientName', message: 'Patient name is required' });
+    }
+    if (!body.location || typeof body.location !== 'string' || body.location.trim().length === 0) {
+      errors.push({ field: 'location', message: 'Location is required' });
+    }
+    if (!body.comment || typeof body.comment !== 'string' || body.comment.trim().length === 0) {
+      errors.push({ field: 'comment', message: 'Review comment is required' });
+    }
+  } else {
+    if (body.patientName !== undefined && (typeof body.patientName !== 'string' || body.patientName.trim().length === 0)) {
+      errors.push({ field: 'patientName', message: 'Patient name cannot be empty' });
+    }
+    if (body.location !== undefined && (typeof body.location !== 'string' || body.location.trim().length === 0)) {
+      errors.push({ field: 'location', message: 'Location cannot be empty' });
+    }
+    if (body.comment !== undefined && (typeof body.comment !== 'string' || body.comment.trim().length === 0)) {
+      errors.push({ field: 'comment', message: 'Review comment cannot be empty' });
+    }
+  }
+
+  if (body.rating !== undefined) {
+    const rating = Number(body.rating);
+    if (isNaN(rating) || rating < 1 || rating > 5) {
+      errors.push({ field: 'rating', message: 'Rating must be between 1 and 5' });
+    }
+  }
+
+  return errors;
+}
+
+
+export function validateBlogInput(body: any, isUpdate = false): ApiErrorDetail[] {
+  const errors: ApiErrorDetail[] = [];
+
+  if (!isUpdate) {
+    if (!body.title || typeof body.title !== 'string' || body.title.trim().length === 0) {
+      errors.push({ field: 'title', message: 'Blog title is required' });
+    }
+    if (!body.excerpt || typeof body.excerpt !== 'string' || body.excerpt.trim().length === 0) {
+      errors.push({ field: 'excerpt', message: 'Blog excerpt / summary is required' });
+    }
+    if (!body.content || typeof body.content !== 'string' || body.content.trim().length === 0) {
+      errors.push({ field: 'content', message: 'Blog article content is required' });
+    }
+    if (!body.coverImage || typeof body.coverImage !== 'string' || body.coverImage.trim().length === 0) {
+      errors.push({ field: 'coverImage', message: 'Cover image is required' });
+    }
+  } else {
+    if (body.title !== undefined && (typeof body.title !== 'string' || body.title.trim().length === 0)) {
+      errors.push({ field: 'title', message: 'Blog title cannot be empty' });
+    }
+    if (body.excerpt !== undefined && (typeof body.excerpt !== 'string' || body.excerpt.trim().length === 0)) {
+      errors.push({ field: 'excerpt', message: 'Blog excerpt cannot be empty' });
+    }
+    if (body.content !== undefined && (typeof body.content !== 'string' || body.content.trim().length === 0)) {
+      errors.push({ field: 'content', message: 'Blog content cannot be empty' });
+    }
+    if (body.coverImage !== undefined && (typeof body.coverImage !== 'string' || body.coverImage.trim().length === 0)) {
+      errors.push({ field: 'coverImage', message: 'Cover image cannot be empty' });
+    }
+  }
+
+  return errors;
+}

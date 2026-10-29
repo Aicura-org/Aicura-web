@@ -66,11 +66,40 @@ async function getAboutSection() {
   }
 }
 
+async function getTestimonials() {
+  try {
+    const testimonials = await prisma.testimonial.findMany({
+      where: { isFeatured: true },
+      orderBy: { createdAt: 'desc' },
+    });
+    return testimonials;
+  } catch (error) {
+    console.error('Failed fetching testimonials server-side:', error);
+    return [];
+  }
+}
+
+async function getBlogs() {
+  try {
+    const blogs = await prisma.blog.findMany({
+      where: { isPublished: true },
+      orderBy: { publishedAt: 'desc' },
+      take: 3,
+    });
+    return blogs;
+  } catch (error) {
+    console.error('Failed fetching blogs server-side:', error);
+    return [];
+  }
+}
+
 export default async function HomePage() {
-  const [heroBanners, homeCollectionBanner, aboutSection] = await Promise.all([
+  const [heroBanners, homeCollectionBanner, aboutSection, testimonials, blogs] = await Promise.all([
     getHeroBanners(),
     getHomeCollectionBanner(),
     getAboutSection(),
+    getTestimonials(),
+    getBlogs(),
   ]);
 
   return (
@@ -82,13 +111,10 @@ export default async function HomePage() {
       <HomeCollectionBanner initialData={homeCollectionBanner} />
       <HowItWorks />
       <WhyAiCura />
-      <TestimonialsSection />
-      <BlogSection />
+      <TestimonialsSection initialData={testimonials} />
+      <BlogSection initialData={blogs} />
       <FAQSection />
       <CTABanner />
     </div>
   );
 }
-
-
-

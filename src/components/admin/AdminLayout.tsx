@@ -21,6 +21,8 @@ import {
   X,
   Loader2,
   HelpCircle,
+  Quote,
+  FileText,
 } from 'lucide-react';
 import { AdminUserProfile } from '@/types';
 
@@ -84,13 +86,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Home Collection CMS', href: '/admin/home-collection', icon: Bike },
     { label: 'Packages CMS', href: '/admin/packages', icon: Package },
     { label: 'Tests & Services CMS', href: '/admin/tests', icon: FlaskConical },
+    { label: 'Patient Reviews CMS', href: '/admin/testimonials', icon: Quote },
+    { label: 'Blogs & Articles CMS', href: '/admin/blogs', icon: FileText },
     { label: 'Campaigns CMS', href: '/admin/campaigns', icon: Megaphone },
     { label: 'Campaign FAQs', href: '/admin/faqs', icon: HelpCircle },
     { label: 'Gallery CMS', href: '/admin/gallery', icon: GalleryHorizontal },
     { label: 'Patient Enquiries', href: '/admin/enquiries', icon: CalendarCheck },
   ];
-
-
 
   if (authenticating) {
     return (
@@ -116,7 +118,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Sidebar Desktop & Mobile Drawer */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-brand-800 text-white border-r border-brand-700 p-5 justify-between shrink-0 transition-transform duration-200 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-brand-800 text-white border-r border-brand-700 p-5 justify-between shrink-0 transition-transform duration-200 ease-in-out overflow-y-auto ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >

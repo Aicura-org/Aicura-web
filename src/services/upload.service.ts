@@ -1,4 +1,4 @@
-import { uploadToCloudinary, deleteFromCloudinary, ImageCategory } from '@/lib/cloudinary';
+import { uploadToCloudinary, deleteFromCloudinary, extractCloudinaryPublicId, ImageCategory } from '@/lib/cloudinary';
 
 export const UploadService = {
   async uploadImage(
@@ -28,7 +28,12 @@ export const UploadService = {
     }
   },
 
-  async deleteImage(publicId: string): Promise<boolean> {
+  async deleteImage(urlOrPublicId: string): Promise<boolean> {
+    const publicId = extractCloudinaryPublicId(urlOrPublicId);
+    if (!publicId) {
+      return false;
+    }
+
     const isCloudinaryConfigured = Boolean(
       process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME &&
       process.env.CLOUDINARY_API_KEY &&
