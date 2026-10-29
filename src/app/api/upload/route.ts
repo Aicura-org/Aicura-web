@@ -35,3 +35,31 @@ export async function POST(req: NextRequest) {
     return internalErrorResponse(error);
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const adminSession = await getAdminFromRequest(req);
+    if (!adminSession) {
+      return unauthorizedResponse('Authentication required to delete files');
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const target =
+      body.publicId ||
+      body.url ||
+      req.nextUrl.searchParams.get('publicId') ||
+      req.nextUrl.searchParams.get('url');
+
+    if (!target || typeof target !== 'string') {
+      return errorResponse('Image URL or publicId is required for deletion', 400);
+    }
+
+    const deleted = await UploadService.deleteImage(target);
+    return successResponse({ deleted }, 'Image removed from Cloudinary');
+  } catch (error: any) {
+    if (error instanceof Error) {
+      return errorResponse(error.message, 400, 'CLOUDINARY_DELETE_ERROR');
+    }
+    return internalErrorResponse(error);
+  }
+}

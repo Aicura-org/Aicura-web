@@ -72,11 +72,45 @@ export default async function PackageDetailPage({ params }: Props) {
     // Fallback to default
   }
 
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://aicuradiagnostics.com').replace(
+    /\/+$/,
+    ''
+  );
+
+  const packageJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: pkg.title,
+    description: pkg.description,
+    image: pkg.imageUrl ? [pkg.imageUrl] : [`${siteUrl}/campaigns-packages-banner.webp`],
+    brand: {
+      '@type': 'Brand',
+      name: 'AiCura Diagnostics',
+    },
+    offers: {
+      '@type': 'Offer',
+      url: `${siteUrl}/packages/${pkg.slug}`,
+      priceCurrency: 'INR',
+      price: pkg.discountedPrice,
+      availability: 'https://schema.org/InStock',
+      seller: {
+        '@type': 'Organization',
+        name: 'AiCura Diagnostics',
+      },
+    },
+  };
+
   return (
-    <PackageDetailClient
-      pkg={pkg}
-      relatedPackages={relatedPackages}
-      whatsappNumber={whatsappNumber}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(packageJsonLd) }}
+      />
+      <PackageDetailClient
+        pkg={pkg}
+        relatedPackages={relatedPackages}
+        whatsappNumber={whatsappNumber}
+      />
+    </>
   );
 }

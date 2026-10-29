@@ -131,6 +131,41 @@ export const deleteFromCloudinary = async (publicId: string) => {
 };
 
 /**
+ * Extracts the Cloudinary public_id from a Cloudinary delivery URL or returns
+ * a direct public_id if a non-URL string is passed. Returns null for external non-Cloudinary URLs.
+ */
+export function extractCloudinaryPublicId(urlOrPublicId: string | null | undefined): string | null {
+  if (!urlOrPublicId || typeof urlOrPublicId !== 'string') return null;
+  const trimmed = urlOrPublicId.trim();
+  if (!trimmed) return null;
+
+  // If it's already a public_id (not a URL), return it directly
+  if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+
+  // Only extract from Cloudinary URLs
+  if (!trimmed.includes('res.cloudinary.com')) {
+    return null;
+  }
+
+  const uploadIndex = trimmed.indexOf('/upload/');
+  if (uploadIndex === -1) return null;
+
+  let afterUpload = trimmed.substring(uploadIndex + 8);
+
+  // Strip version prefix (and any transformations before it), e.g. "f_auto,q_auto/v1745678901/folder/file.webp"
+  const versionMatch = afterUpload.match(/^(?:.*\/)?v\d+\/(.+)$/);
+  if (versionMatch && versionMatch[1]) {
+    afterUpload = versionMatch[1];
+  }
+
+  // Remove file extension and query string
+  const publicId = afterUpload.replace(/\.[a-zA-Z0-9]+(?:\?.*)?$/, '');
+  return publicId || null;
+}
+
+/**
  * Utility to inject dynamic Cloudinary delivery transformations (WebP / AVIF auto-format and quality)
  * into any Cloudinary URL on the fly.
  */

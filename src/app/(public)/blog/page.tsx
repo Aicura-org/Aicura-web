@@ -1,43 +1,43 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { Metadata } from 'next';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Clock, Loader2 } from 'lucide-react';
+import { Clock } from 'lucide-react';
+import { BlogService } from '@/services/blog.service';
 
-interface BlogItem {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
-  coverImage: string;
-  readTime: string;
-  author: string;
-  publishedAt: string;
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const blogs = await BlogService.listBlogs({ isPublished: true, limit: 3 });
+    const latestTitles = blogs.map((b) => b.title).join(' | ');
+    const description =
+      blogs.length > 0
+        ? `Explore health insights & medical guides from AiCura Diagnostics: ${latestTitles}`
+        : 'Stay informed with articles written by doctors and medical experts on preventative health and diagnostic testing at AiCura Diagnostics.';
+
+    return {
+      title: 'Health Resources & Medical Blog | AiCura Diagnostics',
+      description,
+      openGraph: {
+        title: 'Health Resources & Medical Blog | AiCura Diagnostics',
+        description,
+        images: blogs[0]?.coverImage ? [{ url: blogs[0].coverImage, alt: blogs[0].title }] : [],
+        type: 'website',
+      },
+    };
+  } catch {
+    return {
+      title: 'Health Resources & Medical Blog | AiCura Diagnostics',
+      description:
+        'Stay informed with articles written by doctors and medical experts on preventative health and diagnostic testing.',
+    };
+  }
 }
 
-export default function BlogListPage() {
-  const [blogs, setBlogs] = useState<BlogItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadBlogs() {
-      try {
-        const res = await fetch('/api/blogs');
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success && data.data) {
-            setBlogs(data.data);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to load blogs:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadBlogs();
-  }, []);
+export default async function BlogListPage() {
+  const blogs = await BlogService.listBlogs({ isPublished: true }).catch(() => []);
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans">
@@ -45,10 +45,10 @@ export default function BlogListPage() {
       <div className="hero-gradient text-white py-14 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center space-y-3">
           <span className="text-yellow-400 text-xs font-bold uppercase tracking-widest">
-            Health Insights & Educational Content
+            Health Insights &amp; Educational Content
           </span>
           <h1 className="text-3xl sm:text-5xl font-extrabold font-sans">
-            AiCura Health Resources & Blog
+            AiCura Health Resources &amp; Blog
           </h1>
           <p className="text-slate-200 text-sm max-w-2xl mx-auto">
             Stay informed with articles written by doctors and medical experts on preventative health and diagnostic testing.
@@ -57,10 +57,9 @@ export default function BlogListPage() {
       </div>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex-1 w-full">
-        {loading ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3 text-slate-400">
-            <Loader2 className="w-8 h-8 text-brand-700 animate-spin" />
-            <p className="text-xs font-semibold">Loading health articles...</p>
+        {blogs.length === 0 ? (
+          <div className="py-20 text-center text-slate-500 text-xs">
+            No health articles available at the moment.
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -108,6 +107,7 @@ export default function BlogListPage() {
             ))}
           </div>
         )}
-      </main>    </div>
+      </main>
+    </div>
   );
 }

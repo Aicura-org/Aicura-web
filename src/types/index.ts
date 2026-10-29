@@ -301,3 +301,55 @@ export interface CreateDiagnosticTestInput {
 }
 
 export interface UpdateDiagnosticTestInput extends Partial<CreateDiagnosticTestInput> {}
+
+export interface TestimonialItem {
+  id: string;
+  patientName: string;
+  location: string;
+  comment: string;
+  rating: number;
+  avatarUrl?: string | null;
+  isFeatured: boolean;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface CreateTestimonialInput {
+  patientName: string;
+  location: string;
+  comment: string;
+  rating?: number;
+  avatarUrl?: string | null;
+  isFeatured?: boolean;
+}
+
+export interface UpdateTestimonialInput extends Partial<CreateTestimonialInput> {}
+
+export interface BlogItem {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  readTime: string;
+  author: string;
+  isPublished: boolean;
+  publishedAt: string | Date;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+}
+
+export interface CreateBlogInput {
+  title: string;
+  slug?: string;
+  excerpt: string;
+  content: string;
+  coverImage: string;
+  readTime?: string;
+  author?: string;
+  isPublished?: boolean;
+  publishedAt?: string | Date;
+}
+
+export interface UpdateBlogInput extends Partial<CreateBlogInput> {}
